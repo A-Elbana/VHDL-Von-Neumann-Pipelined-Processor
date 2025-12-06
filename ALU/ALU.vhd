@@ -115,17 +115,5 @@ begin
                     "10" WHEN FunctionOpcode = "110" AND ALUOP = "11" ELSE --and
                     "01" WHEN FunctionOpcode = "100" AND ALUOP = "11" ELSE --setc
                     "00";
-    -- ADD_RESULT_Load_Call : FullAddSub
-    --     generic map(
-    --         n => n
-    --     )
-    --     port map(
-    --         A       => A,
-    --         B       => (others => '0'),
-    --         CBin    => '0',
-    --         control => '0',
-    --         res     => ADD_RES_ONE_OP,
-    --         CBout   => Carry_ADD_ONE_OP
-    --     );
-
+    
 end architecture ALU_Arch;
