@@ -9,7 +9,7 @@ entity EX_Stage is
         func, Rdst, Rsrc1, Rsrc2              : in  std_logic_vector(2 downto 0);
         JumbType, AluOP                       : in  std_logic_vector(1 downto 0);
         Swap, AluSrc, OutOP, InputOp          : in  std_logic;
-        M_control                             : in  std_logic_vector(8 downto 0);
+        M_control                             : in  std_logic_vector(7 downto 0);
         WB_control                            : in  std_logic_vector(1 downto 0);
         clk                                   : in  std_logic;
         rst                                   : in  std_logic;
