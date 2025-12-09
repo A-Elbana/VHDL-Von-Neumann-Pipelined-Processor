@@ -6,11 +6,11 @@ entity LoadToPCFSM is
     port(
         clk             : in  std_logic;
         rst             : in  std_logic;
-        interrupt_index : in  std_logic_vector(2 downto 0);
+        interrupt_index : in  std_logic_vector(1 downto 0);
         memOp           : in  std_logic;
         INT             : in  std_logic;
         LoadPC          : out std_logic;
-        int_index       : out std_logic_vector(2 downto 0);
+        int_index       : out std_logic_vector(1 downto 0);
         IFID_FLUSH         : out std_logic
     );
 end entity LoadToPCFSM;
@@ -57,6 +57,7 @@ begin
                 when IDLE =>
                     if INT = '1' then
                         next_state <= WAITING;
+                        IFID_FLUSH <= '1';
                     end if;
                 when WAITING =>
                     if memOp = '0' then
