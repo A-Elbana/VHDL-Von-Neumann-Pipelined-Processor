@@ -94,8 +94,7 @@ begin
     or decoded_inst(7) -- POP
     or RETURNINST; -- Return Instructions
 
-    ALUOPType(0) <= decoded_inst(15) -- CALL
-    or decoded_inst(10) -- LDM
+    ALUOPType(0) <= decoded_inst(10) -- LDM
     or decoded_inst(19) -- LDD
     or decoded_inst(20) -- STD
     or decoded_inst(2) -- ALUOP
