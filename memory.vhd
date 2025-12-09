@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 
 ENTITY Memory IS
     PORT (
-        clk, reset, MemWrite, MemRead : IN STD_LOGIC; 
+        clk, MemWrite, MemRead : IN STD_LOGIC; 
         Address, writeData : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
         readData : OUT STD_LOGIC_VECTOR(31 DOWNTO 0) 
     );
@@ -13,27 +13,20 @@ END ENTITY Memory;
 ARCHITECTURE memArch OF Memory IS
     TYPE memType IS ARRAY (0 TO 262143) OF STD_LOGIC_VECTOR(31 DOWNTO 0); 
     SIGNAL memData : memType;
-    SIGNAL tempAddress : STD_LOGIC_VECTOR(31 DOWNTO 0);
 
 BEGIN
-    PROCESS (clk,reset) IS
+    PROCESS (clk) IS
     BEGIN
-
-    IF(reset = '1') THEN
-        tempAddress <= (OTHERS => '0');
-    ELSE tempAddress <= Address;
-    END IF;
-    
         IF rising_edge(clk) THEN
             IF MemWrite = '1' THEN
-                memData(to_integer(unsigned(tempAddress))) <= writeData;
+                memData(to_integer(unsigned(Address))) <= writeData;
             END IF;
         END IF;
     END PROCESS;
 
 
-	readData <= (OTHERS => 'U') WHEN (to_integer(unsigned(tempAddress)) > 262143) OR (to_integer(signed(tempAddress)) < 0)
-	ELSE memData(to_integer(unsigned(tempAddress))) WHEN MemRead = '1'
-	ELSE (OTHERS => 'U');
+	readData <= (OTHERS => '0') WHEN (to_integer(unsigned(Address)) > 262143)
+	ELSE memData(to_integer(unsigned(Address))) WHEN MemRead = '1'
+	ELSE (OTHERS => '0');
 
 END memArch;
