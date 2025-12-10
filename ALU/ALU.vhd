@@ -19,56 +19,23 @@ entity ALU is
 end entity ALU;
 
 architecture ALU_Arch of ALU is
-
-    component FullAddSub IS
-        GENERIC(n : INTEGER := 32);
-        PORT(
-            A, B          : IN  STD_LOGIC_VECTOR(n - 1 DOWNTO 0);
-            CBin, control : IN  STD_LOGIC;
-            res           : OUT STD_LOGIC_VECTOR(n - 1 DOWNTO 0);
-            CBout         : OUT STD_LOGIC
-        );
-    END component FullAddSub;
-
-    signal ADD_RES, INC_RES, SUB_RES, MOV_RES, AND_RES, NOT_RES : std_logic_vector(n - 1 downto 0) := (others => '0');
+    signal MOV_RES, AND_RES, NOT_RES, ADD_RES, INC_RES, SUB_RES : std_logic_vector(n - 1 downto 0) := (others => '0');
+    signal ADD_RES_Vector, INC_RES_Vector, SUB_RES_Vector       : unsigned(n downto 0)             := (others => '0');
     signal Carry_ADD, Carry_INC, Carry_SUB                      : std_logic                        := '0';
 begin
-    ADD_RESULT : FullAddSub
-        generic map(
-            n => n
-        )
-        port map(
-            A       => A,
-            B       => B,
-            CBin    => '0',
-            control => '1',
-            res     => ADD_RES,
-            CBout   => Carry_ADD
-        );
-    SUB_RESULT : FullAddSub
-        generic map(
-            n => n
-        )
-        port map(
-            A       => A,
-            B       => B,
-            CBin    => '0',
-            control => '0',
-            res     => SUB_RES,
-            CBout   => Carry_SUB
-        );
-    INC_RESULT : FullAddSub
-        generic map(
-            n => n
-        )
-        port map(
-            A       => A,
-            B       => (0 => '1', others => '0'),
-            CBin    => '0',
-            control => '1',
-            res     => INC_RES,
-            CBout   => Carry_INC
-        );
+
+    ADD_RES_Vector <= resize(unsigned(A), n + 1) + resize(unsigned(B), n + 1);
+    ADD_RES        <= std_logic_vector(ADD_RES_Vector(n - 1 downto 0));
+    Carry_ADD      <= std_logic(ADD_RES_Vector(32));
+
+    SUB_RES_Vector <= resize(unsigned(A), n + 1) - resize(unsigned(B), n + 1);
+    SUB_RES        <= std_logic_vector(SUB_RES_Vector(n - 1 downto 0));
+    Carry_SUB      <= std_logic(ADD_RES_Vector(32));
+
+    INC_RES_Vector <= resize(unsigned(A), n + 1);
+    INC_RES        <= std_logic_vector(INC_RES_Vector(n - 1 downto 0));
+    Carry_INC      <= std_logic(ADD_RES_Vector(32));
+
     AND_RES <= A AND B;
     MOV_RES <= A;
     NOT_RES <= NOT A;
@@ -115,5 +82,5 @@ begin
                     "10" WHEN FunctionOpcode = "110" AND ALUOP = "11" ELSE --and
                     "01" WHEN FunctionOpcode = "100" AND ALUOP = "11" ELSE --setc
                     "00";
-    
+
 end architecture ALU_Arch;
