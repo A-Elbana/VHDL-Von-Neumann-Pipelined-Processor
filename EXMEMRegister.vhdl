@@ -11,12 +11,12 @@ entity EXMEMRegister is
         MemToReg_IN, RegWrite_IN                                                 : in  std_logic; -- WB Signals
         PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN       : in  std_logic; -- M Signals
         StackOpType_IN                                                           : in  std_logic_vector(1 downto 0); -- M Signals
-        PC_IN, StoreData_IN                                                      : in  std_logic_vector(31 downto 0); -- Data
+        PC_IN, StoreData_IN, ALUResult_IN                                        : in  std_logic_vector(31 downto 0); -- Data
         CCR_IN, Rdst_IN                                                          : in  std_logic_vector(2 downto 0); -- Data
         MemToReg_OUT, RegWrite_OUT                                               : out std_logic; -- WB Signals
         PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT : out std_logic; -- M Signals
         StackOpType_OUT                                                          : out std_logic_vector(1 downto 0); -- M Signals
-        PC_OUT, StoreData_OUT                                                    : out std_logic_vector(31 downto 0); -- Data
+        PC_OUT, StoreData_OUT, ALUResult_OUT                                     : out std_logic_vector(31 downto 0); -- Data
         CCR_OUT, Rdst_OUT                                                        : out std_logic_vector(2 downto 0) -- Data
     );
 end entity EXMEMRegister;
@@ -43,6 +43,7 @@ begin
             -- Data
             PC_OUT        <= (others => '0');
             StoreData_OUT <= (others => '0');
+            ALUResult_OUT <= (others => '0');
             CCR_OUT       <= (others => '0');
             Rdst_OUT      <= (others => '0');
 
@@ -62,6 +63,7 @@ begin
 
                 PC_OUT        <= (others => '0');
                 StoreData_OUT <= (others => '0');
+                ALUResult_OUT <= (others => '0');
                 CCR_OUT       <= (others => '0');
                 Rdst_OUT      <= (others => '0');
 
@@ -80,6 +82,7 @@ begin
 
                 PC_OUT        <= PC_IN;
                 StoreData_OUT <= StoreData_IN;
+                ALUResult_OUT <= ALUResult_IN;
                 CCR_OUT       <= CCR_IN;
                 Rdst_OUT      <= Rdst_IN;
             end if;
