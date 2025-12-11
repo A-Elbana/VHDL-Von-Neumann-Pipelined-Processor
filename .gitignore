@@ -6,3 +6,7 @@
 !/*.vhdl
 !/*.do
 !/*.pdf
+!/ALU/
+!/ALU/*
+!/Integeration_Folder/
+!/Integeration_Folder/*
