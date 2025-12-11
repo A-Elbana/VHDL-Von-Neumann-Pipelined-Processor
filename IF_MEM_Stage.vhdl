@@ -8,38 +8,55 @@ entity IF_MEM_Stage is
         rst                                                                : in  std_logic;
         HWInt                                                              : in  std_logic;
         MemOp_Priority_IN                                                  : in  std_logic;
-        LoadPC_IN                                                          : in  std_logic;
         PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN : in  std_logic; -- M Signals
+        StackOpType_IN                                                     : in  std_logic_vector(1 downto 0); -- M Signals
         WB_control_IN                                                      : in  std_logic_vector(1 downto 0);
-        PC_IN, StoreData_IN                                                : in  std_logic_vector(31 downto 0); -- Data
+        PC_IN, StoreData_IN, ALUResult_IN                                  : in  std_logic_vector(31 downto 0); -- Data
         CCR_IN, Rdst_IN                                                    : in  std_logic_vector(2 downto 0); -- Data
         IFID_Imm, IDEX_Imm                                                 : in  std_logic_vector(31 downto 0);
         IDEX_ConditionalJMP                                                : in  std_logic;
         IFID_JMPCALL                                                       : in  std_logic;
         WB_control_OUT                                                     : out std_logic_vector(1 downto 0);
-        PC_OUT, readData_OUT                                               : out std_logic_vector(31 downto 0); -- Data
+        PC_OUT, readData_OUT, ALUResult_OUT                                : out std_logic_vector(31 downto 0); -- Data
         Rdst_OUT                                                           : out std_logic_vector(2 downto 0) -- Data
     );
 end entity IF_MEM_Stage;
 
 architecture RTL of IF_MEM_Stage is
 
-    signal MemWrite, MemRead   : std_logic;
-    signal Address             : std_logic_vector(31 downto 0);
-    signal Address_MUX1        : std_logic_vector(31 downto 0);
-    signal Address_MUX2        : std_logic_vector(31 downto 0);
-    signal writeData           : std_logic_vector(31 downto 0);
-    signal writeData_MUX       : std_logic_vector(31 downto 0);
-    signal PC_REG_IN           : std_logic_vector(31 downto 0);
-    signal PC_REG_OUT          : std_logic_vector(31 downto 0);
-    signal JMPADDRRESS         : std_logic_vector(31 downto 0);
-    signal STORED_PC_AND_FLAGS : std_logic_vector(31 downto 0);
+    signal MemWrite, MemRead         : std_logic;
+    signal Address                   : std_logic_vector(31 downto 0);
+    signal Address_MUX1              : std_logic_vector(31 downto 0);
+    signal Address_MUX2              : std_logic_vector(31 downto 0);
+    signal writeData                 : std_logic_vector(31 downto 0);
+    signal writeData_MUX             : std_logic_vector(31 downto 0);
+    signal PC_REG_IN                 : std_logic_vector(31 downto 0);
+    signal PC_REG_OUT                : std_logic_vector(31 downto 0);
+    signal JMPADDRRESS               : std_logic_vector(31 downto 0);
+    signal PC_TO_BE_STORED_AND_FLAGS : std_logic_vector(31 downto 0);
+    signal STACKPOINTER              : std_logic_vector(31 downto 0);
+    signal INTINDEX                  : std_logic_vector(1 downto 0);
+    signal LoadPC                    : std_logic;
 
 begin
+    -- TODO Stack pointer
+    -- TODO LoadToPCFSM signals
+    -- TODO IFID Register INs (Demuxes and Muxes invloving IFID_SWP and IFID_Imm32)
+    LoadToPCFSM_inst : entity work.LoadToPCFSM
+        port map(
+            clk             => clk,
+            rst             => rst,
+            interrupt_index => interrupt_index,
+            memOp           => MemOp_Priority_IN,
+            INT             => INT,
+            LoadPC          => LoadPC,
+            int_index       => INTINDEX,
+            IFID_FLUSH      => IFID_FLUSH
+        );
 
     PC_OUT      <= PC_REG_OUT;
-    JMPADDRRESS <= IDEX_Imm when IDEX_ConditionalJMP else IFID_Imm;
-    PC_REG_IN   <= readData_OUT when rst else readData_OUT when (RET_IN or LoadPC_IN) else JMPADDRRESS when (IFID_JMPCALL or IDEX_ConditionalJMP) else std_logic_vector(unsigned(PC_REG_OUT) + unsigned(1));
+    JMPADDRRESS <= IDEX_Imm when IDEX_ConditionalJMP = '1' else IFID_Imm;
+    PC_REG_IN   <= readData_OUT when rst = '1' else readData_OUT when (RET_IN or LoadPC) = '1' else JMPADDRRESS when (IFID_JMPCALL or IDEX_ConditionalJMP) = '1' else std_logic_vector(unsigned(PC_REG_OUT) + unsigned(1));
     PC_inst : entity work.PC
         port map(
             clk     => clk,
@@ -49,12 +66,18 @@ begin
             PC_Out  => PC_REG_OUT
         );
 
-    MemWrite            <= (HWInt OR MemWrite_IN) WHEN MemOp_Priority_IN ELSE '0';
-    MemRead             <= ((not HWInt) AND MemRead_IN) WHEN MemOp_Priority_IN ELSE '1';
-    Address            <= (31 downto 0 => '0') WHEN MemOp_Priority_IN ELSE ();
-    STORED_PC_AND_FLAGS <= (31 downto 29 => CCR_IN, 28 downto 0 => std_logic_vector(unsigned(PC_IN) + unsigned(1))(28 downto 0));
-    writeData_MUX       <= STORED_PC_AND_FLAGS when PCStore_IN else StoreData_IN;
-    writeData           <= writeData_MUX when HWInt else PC_REG_OUT;
+
+
+    
+    
+    MemWrite                  <= (HWInt OR MemWrite_IN) WHEN MemOp_Priority_IN = '1' ELSE '0';
+    MemRead                   <= ((not HWInt) AND MemRead_IN) WHEN MemOp_Priority_IN = '1' ELSE '1';
+    Address_MUX1              <= STACKPOINTER when (HWInt or StackOpType_IN(1)) = '1' else ALUResult_IN;
+    Address_MUX2              <= ((others => '0'),(1 downto 0)=> INTINDEX) when LoadPC = '1' else Address_MUX1 when MemOp_Priority_IN = '1' else PC_REG_OUT;
+    Address        <= (31 downto 0 => '0') WHEN MemOp_Priority_IN = '1' ELSE Address_MUX2;
+    PC_TO_BE_STORED_AND_FLAGS <= (31 downto 29 => CCR_IN, 28 downto 0 => std_logic_vector(unsigned(PC_IN) + unsigned(1))(28 downto 0));
+    writeData_MUX             <= PC_TO_BE_STORED_AND_FLAGS when PCStore_IN = '1' else StoreData_IN;
+    writeData                 <= writeData_MUX when HWInt = '1' else (31 downto 29 => CCR_IN, 28 downto 0 => std_logic_vector(unsigned(PC_REG_OUT) + unsigned(1))(28 downto 0));
     Memory_inst : entity work.Memory
         port map(
             clk       => clk,

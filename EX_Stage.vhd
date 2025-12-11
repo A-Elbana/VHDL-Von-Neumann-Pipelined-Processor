@@ -7,7 +7,7 @@ entity EX_Stage is
         --some signal can be done on the cpu module like the pc and M/WB_control
         PC, ReadData1, ReadData2, Imm, INPort : in  std_logic_vector(31 downto 0);
         func, Rdst, Rsrc1, Rsrc2              : in  std_logic_vector(2 downto 0);
-        JumbType, AluOP                       : in  std_logic_vector(1 downto 0);
+        JumpType, AluOP                       : in  std_logic_vector(1 downto 0);
         Swap, AluSrc, OutOP, InputOp          : in  std_logic;
         M_control                             : in  std_logic_vector(7 downto 0);
         WB_control                            : in  std_logic_vector(1 downto 0);
@@ -93,9 +93,9 @@ begin
     --CCR[0]=Z-flag
     --CCR[1]=N-flag
     --CCR[2]=C-flag
-    ConditionalJMP <= CCR_singal_Out(0) WHEN JumbType = "01" ELSE
-                      CCR_singal_Out(1) WHEN JumbType = "10" ELSE
-                      CCR_singal_Out(2) WHEN JumbType = "11" ELSE
+    ConditionalJMP <= CCR_singal_Out(0) WHEN JumpType = "01" ELSE
+                      CCR_singal_Out(1) WHEN JumpType = "10" ELSE
+                      CCR_singal_Out(2) WHEN JumpType = "11" ELSE
                       '0';
 
     OUTPORT <= ALUResult_Signal WHEN OutOP = '1' ELSE
