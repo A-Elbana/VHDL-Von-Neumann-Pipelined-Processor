@@ -10,8 +10,8 @@ entity EXMEMRegister is
         flush                                                                                 : in  std_logic;
         MemToReg_IN, RegWrite_IN                                                              : in  std_logic; -- WB Signals
         MemToReg_OUT, RegWrite_OUT                                                            : out std_logic; -- WB Signals
-        PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN, InputOp_IN        : in  std_logic; -- M Signals
-        PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT, InputOp_OUT : out std_logic; -- M Signals
+        PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN        : in  std_logic; -- M Signals
+        PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT : out std_logic; -- M Signals
         StackOpType_IN                                                                        : in  std_logic_vector(1 downto 0); -- M Signals
         StackOpType_OUT                                                                       : out std_logic_vector(1 downto 0); -- M Signals
         PC_IN, StoreData_IN                                                                   : in  std_logic_vector(31 downto 0); -- Data
@@ -38,7 +38,6 @@ begin
             MemWrite_OUT    <= '0';
             RET_OUT         <= '0';
             RTI_OUT         <= '0';
-            InputOp_OUT     <= '0';
             StackOpType_OUT <= (others => '0');
 
             -- Data
@@ -59,7 +58,6 @@ begin
                 MemWrite_OUT    <= '0';
                 RET_OUT         <= '0';
                 RTI_OUT         <= '0';
-                InputOp_OUT     <= '0';
                 StackOpType_OUT <= (others => '0');
 
                 PC_OUT        <= (others => '0');
@@ -78,7 +76,6 @@ begin
                 MemWrite_OUT    <= MemWrite_IN;
                 RET_OUT         <= RET_IN;
                 RTI_OUT         <= RTI_IN;
-                InputOp_OUT     <= InputOp_IN;
                 StackOpType_OUT <= StackOpType_IN;
 
                 PC_OUT        <= PC_IN;
