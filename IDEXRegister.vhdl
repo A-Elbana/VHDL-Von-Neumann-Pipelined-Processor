@@ -9,18 +9,18 @@ entity IDEXRegister is
         en                                                                                    : in  std_logic;
         flush                                                                                 : in  std_logic;
         MemToReg_IN, RegWrite_IN                                                              : in  std_logic; -- WB Signals
-        MemToReg_OUT, RegWrite_OUT                                                            : out std_logic; -- WB Signals
         PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN, InputOp_IN        : in  std_logic; -- M Signals
-        PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT, InputOp_OUT : out std_logic; -- M Signals
-        StackOpType_IN                                                                        : in  std_logic_vector(1 downto 0); -- M Signals
-        StackOpType_OUT                                                                       : out std_logic_vector(1 downto 0); -- M Signals
         ALUSrc_IN, OutOp_IN, SWINT_IN, JMPCALL_IN, SWP_IN                                     : in  std_logic; -- EX Signals
-        ALUSrc_OUT, OutOp_OUT, SWINT_OUT, JMPCALL_OUT, SWP_OUT                                : out std_logic; -- EX Signals
         ALUOPType_IN, JMPType_IN                                                              : in  std_logic_vector(1 downto 0); -- EX Signals
-        ALUOPType_OUT, JMPType_OUT                                                            : out std_logic_vector(1 downto 0); -- EX Signals
+        StackOpType_IN                                                                        : in  std_logic_vector(1 downto 0); -- M Signals
         PC_IN, ReadData1_IN, ReadData2_IN, Immediate_IN                                       : in  std_logic_vector(31 downto 0); -- Data
-        PC_OUT, ReadData1_OUT, ReadData2_OUT, Immediate_OUT                                   : out std_logic_vector(31 downto 0); -- Data
         Rsrc1_IN, Rsrc2_IN, Rdst_IN, Funct_IN                                                 : in  std_logic_vector(2 downto 0); -- Data
+        MemToReg_OUT, RegWrite_OUT                                                            : out std_logic; -- WB Signals
+        PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT, InputOp_OUT : out std_logic; -- M Signals
+        ALUSrc_OUT, OutOp_OUT, SWINT_OUT, JMPCALL_OUT, SWP_OUT                                : out std_logic; -- EX Signals
+        ALUOPType_OUT, JMPType_OUT                                                            : out std_logic_vector(1 downto 0); -- EX Signals
+        StackOpType_OUT                                                                       : out std_logic_vector(1 downto 0); -- M Signals
+        PC_OUT, ReadData1_OUT, ReadData2_OUT, Immediate_OUT                                   : out std_logic_vector(31 downto 0); -- Data
         Rsrc1_OUT, Rsrc2_OUT, Rdst_OUT, Funct_OUT                                             : out std_logic_vector(2 downto 0) -- Data
     );
 end entity IDEXRegister;

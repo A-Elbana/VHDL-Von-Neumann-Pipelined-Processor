@@ -9,8 +9,8 @@ entity IFIDRegister is
         en                                     : in  std_logic;
         flush                                  : in  std_logic;
         SWP_IN                                 : in  std_logic;
-        SWP_OUT                                : out std_logic;
         Immediate_IN, PC_IN, Instruction_IN    : in  std_logic_vector(31 downto 0);
+        SWP_OUT                                : out std_logic;
         Immediate_OUT, PC_OUT, Instruction_OUT : out std_logic_vector(31 downto 0)
     );
 end entity IFIDRegister;

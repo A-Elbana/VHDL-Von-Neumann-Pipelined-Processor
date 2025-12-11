@@ -9,10 +9,10 @@ entity MEMWBRegister is
         en                           : in  std_logic;
         flush                        : in  std_logic;
         MemToReg_IN, RegWrite_IN     : in  std_logic; -- WB Signals
-        MemToReg_OUT, RegWrite_OUT   : out std_logic; -- WB Signals
         MEMResult_IN, ALUResult_IN   : in  std_logic_vector(31 downto 0); -- Data
-        MEMResult_OUT, ALUResult_OUT : out std_logic_vector(31 downto 0); -- Data
         Rdst_IN                      : in  std_logic_vector(2 downto 0); -- Data
+        MemToReg_OUT, RegWrite_OUT   : out std_logic; -- WB Signals
+        MEMResult_OUT, ALUResult_OUT : out std_logic_vector(31 downto 0); -- Data
         Rdst_OUT                     : out std_logic_vector(2 downto 0) -- Data
     );
 end entity MEMWBRegister;
