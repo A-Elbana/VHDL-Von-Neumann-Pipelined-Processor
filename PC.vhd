@@ -6,8 +6,8 @@ ENTITY PC IS
     PORT(
         clk, reset : IN  STD_LOGIC;
         PCWrite    : IN  STD_LOGIC;
-        PC_IN      : IN  STD_LOGIC_VECTOR(17 DOWNTO 0);
-        PC_Out     : OUT STD_LOGIC_VECTOR(17 DOWNTO 0)
+        PC_IN      : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
+        PC_Out     : OUT STD_LOGIC_VECTOR(31 DOWNTO 0)
     );
 END ENTITY PC;
 
