@@ -38,6 +38,7 @@ architecture RTL of IF_MEM_Stage is
     signal Address                     : std_logic_vector(31 downto 0);
     signal Address_MUX1                : std_logic_vector(31 downto 0);
     signal Address_MUX2                : std_logic_vector(31 downto 0);
+    signal Address_MUX2_Intermediate   : std_logic_vector(31 downto 0);
     signal writeData                   : std_logic_vector(31 downto 0);
     signal writeData_MUX               : std_logic_vector(31 downto 0);
     signal PC_REG_IN                   : std_logic_vector(31 downto 0);
@@ -50,6 +51,7 @@ architecture RTL of IF_MEM_Stage is
     signal INT                         : std_logic;
     signal readData                    : std_logic_vector(31 downto 0);
     signal demuxInst                   : std_logic_vector(31 downto 0);
+    signal demuxInst2                  : std_logic_vector(31 downto 0);
     signal SECOND_SWP_INST             : std_logic_vector(31 downto 0);
     signal PC_IN_ADD_1                 : std_logic_vector(31 downto 0);
     signal intermediate, intermediate2 : std_logic_vector(31 downto 0);
@@ -59,13 +61,14 @@ begin
     PC_IN_ADD_1 <= std_logic_vector(unsigned(PC_IN) + to_unsigned(1, 32));
     -- TODO IFID Register INs (Demuxes and Muxes involving IFID_SWP and IFID_Imm32)
 
-    SECOND_SWP_INST <= "00010" & IFID_Rdst & IFID_Rsrc & "000000000000000000" & "011";
+    SECOND_SWP_INST <= "00010" & IFID_Rsrc & IFID_Rdst & "000000000000000000" & "011";
     IF_Imm          <= readData when IFID_Imm32_SIGNAL = '1' else (others => '0');
-    demuxInst       <= readData when IFID_Imm32_SIGNAL = '0' else (others => '0');
+    demuxInst2      <= readData when MemOp_Priority_IN = '0' else (others => '0');
+    demuxInst       <= demuxInst2 when IFID_Imm32_SIGNAL = '0' else (others => '0');
     Fetched_Inst    <= SECOND_SWP_INST when IFID_SWP = '1' else demuxInst;
 
-    RegWrite_OUT <= RegWrite_IN;
-    MemToReg_OUT <= MemToReg_IN;
+    RegWrite_OUT     <= RegWrite_IN;
+    MemToReg_OUT     <= MemToReg_IN;
     writeAddr_OUT    <= Rdst_IN;
     EXMEM_MemOp_Inst <= MemOp_Inst_IN;
     EXMEM_RTI        <= RTI_IN;
@@ -109,11 +112,12 @@ begin
     MemWrite                  <= (HWInt OR MemWrite_IN) WHEN MemOp_Priority_IN = '1' ELSE '0';
     MemRead                   <= ((not HWInt) AND MemRead_IN) WHEN MemOp_Priority_IN = '1' ELSE '1';
     Address_MUX1              <= STACKPOINTER when (HWInt or StackOpType_IN(1)) = '1' else ALUResult_IN;
-    Address_MUX2              <= (31 downto 2 => '0') & INTINDEX when LoadPC = '1' else Address_MUX1 when MemOp_Priority_IN = '1' else PC_REG_OUT;
-    Address                   <= (31 downto 0 => '0') WHEN MemOp_Priority_IN = '1' ELSE Address_MUX2;
+    Address_MUX2_Intermediate <= Address_MUX1 when MemOp_Priority_IN = '1' else PC_REG_OUT;
+    Address_MUX2              <= (31 downto 2 => '0') & INTINDEX when LoadPC = '1' else Address_MUX2_Intermediate;
+    Address                   <= (31 downto 0 => '0') WHEN rst = '1' ELSE Address_MUX2;
     PC_TO_BE_STORED_AND_FLAGS <= CCR_IN & PC_IN_ADD_1(28 downto 0);
     writeData_MUX             <= PC_TO_BE_STORED_AND_FLAGS when PCStore_IN = '1' else StoreData_IN;
-    writeData                 <= writeData_MUX when HWInt = '1' else CCR_IN & PC_REG_OUT(28 downto 0);
+    writeData                 <= CCR_IN & PC_REG_OUT(28 downto 0) when HWInt = '1' else writeData_MUX;
     Memory_inst : entity work.Memory
         port map(
             clk       => clk,

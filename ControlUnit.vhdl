@@ -26,8 +26,9 @@ begin
     decoded_inst <= (to_integer(unsigned(inst_bits)) => '1', others => '0');
 
     MemToReg <= decoded_inst(7) -- POP
+        or decoded_inst(10) -- LDM
         or decoded_inst(19); -- LDD
-        
+
     RegWrite <= decoded_inst(2) -- ALUOP
         or decoded_inst(4) -- IN
         or decoded_inst(7) -- POP
@@ -44,12 +45,14 @@ begin
         or decoded_inst(19) -- LDD
         or decoded_inst(16) -- RET
         or decoded_inst(18) -- RTI
+        or decoded_inst(10) -- LDM
         or decoded_inst(6) -- PUSH
         or decoded_inst(15) -- CALL
         or decoded_inst(20); -- STD
 
     MemRead <= decoded_inst(7) -- POP
         or decoded_inst(19) -- LDD
+        or decoded_inst(10) -- LDM
         or decoded_inst(16) -- RET
         or decoded_inst(18); -- RTI
 
@@ -127,8 +130,8 @@ begin
     or decoded_inst(9); -- IADD
 
     Imm32 <= (Imm and not SECOND_Imm32_SIGNAL_IN);
-    MemOp_Priority <= (EXMEM_MemOp and not Imm) or HWInt;
-    IFID_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) or (EXMEM_MemOp and not Imm) or RETURNINST;
+    MemOp_Priority <= (EXMEM_MemOp and (SECOND_Imm32_SIGNAL_IN xnor Imm)) or HWInt;
+    IFID_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) or RETURNINST or decoded_inst(1);
     IDEX_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN);
     EXMEM_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN);
     MEMWB_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN);

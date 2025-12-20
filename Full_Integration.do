@@ -4,8 +4,16 @@ add wave -divider "DEBUG Watch"
 add wave -position insertpoint  \
 sim:/full_integration/clk \
 sim:/full_integration/rst  \
+sim:/full_integration/INPort  \
+sim:/full_integration/WB_D_Stage_inst/ControlUnit_inst/SECOND_Imm32_SIGNAL_IN \
+sim:/full_integration/WB_D_Stage_inst/IFID_EN \
+sim:/full_integration/WB_D_Stage_inst/IDEX_EN \
+sim:/full_integration/WB_D_Stage_inst/EXMEM_EN \
+sim:/full_integration/WB_D_Stage_inst/MEMWB_EN \
+sim:/full_integration/IF_MEM_Stage_inst/writeData \
+sim:/full_integration/IF_MEM_Stage_inst/Address \
 sim:/full_integration/WB_D_Stage_inst/regfile_inst/RegFile \
-sim:/full_integration/EX_Stage_inst/CCR
+sim:/full_integration/EX_Stage_inst/CCR 
 add wave -divider "IFID_Reg_Outputs"
 add wave -position insertpoint  \
 sim:/full_integration/IFIDRegister_inst/SWP_OUT \

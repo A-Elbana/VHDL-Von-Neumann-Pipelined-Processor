@@ -10,7 +10,7 @@ end entity Full_Integration;
 
 architecture RTL of Full_Integration is
     signal IFID_REG_OUT   : std_logic_vector(97 downto 0);
-    signal HWInt          : std_logic := '0';
+    signal HWInt          : std_logic                     := '0';
     signal INPort         : std_logic_vector(31 downto 0) := x"ABABABAB";
     signal OUTPort        : std_logic_vector(31 downto 0);
     signal WB_D_OUT       : std_logic_vector(167 downto 0);
@@ -19,7 +19,6 @@ architecture RTL of Full_Integration is
     signal EX_MEM_REG_OUT : std_logic_vector(111 downto 0);
     signal IF_MEM_OUT     : std_logic_vector(167 downto 0);
     signal MEM_WB_REG_OUT : std_logic_vector(68 downto 0);
-    
 
 begin
     IFIDRegister_inst : entity work.IFIDRegister
@@ -30,6 +29,7 @@ begin
             flush                   => IF_MEM_OUT(135),
             SWP_IN                  => WB_D_OUT(162),
             SECOND_Imm32_SIGNAL_IN  => WB_D_OUT(163),
+            Imm32_SIGNAL            => WB_D_OUT(163),
             Immediate_IN            => IF_MEM_OUT(31 downto 0),
             PC_IN                   => IF_MEM_OUT(67 downto 36),
             Instruction_IN          => IF_MEM_OUT(167 downto 136),
@@ -264,21 +264,21 @@ begin
         );
 
     MEMWBRegister_inst : entity work.MEMWBRegister
-            port map(
-                clk           => clk,
-                rst           => rst,
-                en            => WB_D_OUT(167),
-                flush         => '0',
-                MemToReg_IN   => IF_MEM_OUT(34),
-                RegWrite_IN   => IF_MEM_OUT(35),
-                MEMResult_IN  => IF_MEM_OUT(99 downto 68),
-                ALUResult_IN  => IF_MEM_OUT(131 downto 100),
-                Rdst_IN       => IF_MEM_OUT(134 downto 132),
-                MemToReg_OUT  => MEM_WB_REG_OUT(0),
-                RegWrite_OUT  => MEM_WB_REG_OUT(1),
-                MEMResult_OUT => MEM_WB_REG_OUT(33 downto 2),
-                ALUResult_OUT => MEM_WB_REG_OUT(65 downto 34),
-                Rdst_OUT      => MEM_WB_REG_OUT(68 downto 66)
-            );
+        port map(
+            clk           => clk,
+            rst           => rst,
+            en            => WB_D_OUT(167),
+            flush         => '0',
+            MemToReg_IN   => IF_MEM_OUT(34),
+            RegWrite_IN   => IF_MEM_OUT(35),
+            MEMResult_IN  => IF_MEM_OUT(99 downto 68),
+            ALUResult_IN  => IF_MEM_OUT(131 downto 100),
+            Rdst_IN       => IF_MEM_OUT(134 downto 132),
+            MemToReg_OUT  => MEM_WB_REG_OUT(0),
+            RegWrite_OUT  => MEM_WB_REG_OUT(1),
+            MEMResult_OUT => MEM_WB_REG_OUT(33 downto 2),
+            ALUResult_OUT => MEM_WB_REG_OUT(65 downto 34),
+            Rdst_OUT      => MEM_WB_REG_OUT(68 downto 66)
+        );
 
 end architecture RTL;
