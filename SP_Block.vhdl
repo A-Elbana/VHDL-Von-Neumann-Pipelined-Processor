@@ -16,7 +16,7 @@ architecture RTL of SP_Block is
 begin
 
     Stack_OUT <= 
-        std_logic_vector(unsigned(Stack_Q) + unsigned(1)) WHEN StackOpType_IN = "11" 
+        std_logic_vector(unsigned(Stack_Q) + to_unsigned(1, 32)) WHEN StackOpType_IN = "11" 
         ELSE Stack_Q WHEN StackOpType_IN = "10"
         ELSE (others => '0');
     stack_reg : process (clk, rst) is
@@ -27,9 +27,9 @@ begin
             if StackOpType_IN(1) = '1' then
                 case StackOpType_IN(0) is
                     when '1' => 
-                        Stack_Q <= std_logic_vector(unsigned(Stack_Q) + unsigned(1));
+                        Stack_Q <= std_logic_vector(unsigned(Stack_Q) + to_unsigned(1, 32));
                     when others => 
-                        Stack_Q <= std_logic_vector(unsigned(Stack_Q) - unsigned(1));
+                        Stack_Q <= std_logic_vector(unsigned(Stack_Q) - to_unsigned(1, 32));
                 end case;
             end if;
         end if;

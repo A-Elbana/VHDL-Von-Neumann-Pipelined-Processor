@@ -20,7 +20,7 @@ architecture regFileArch of regFile is
 	begin
 		process(clk) is
 			begin
-				if rising_edge(clk) then  
+				if falling_edge(clk) then  
 					if regWrite = '1' then
 						RegFile(to_integer(unsigned(writeReg))) <= writeData;
 					end if;

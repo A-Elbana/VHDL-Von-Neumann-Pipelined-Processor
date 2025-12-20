@@ -4,24 +4,24 @@ use ieee.numeric_std.all;
 
 entity IDEXRegister is
     port(
-        clk                                                                                   : in  std_logic;
-        rst                                                                                   : in  std_logic;
-        en                                                                                    : in  std_logic;
-        flush                                                                                 : in  std_logic;
-        MemToReg_IN, RegWrite_IN                                                              : in  std_logic; -- WB Signals
-        PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN, InputOp_IN        : in  std_logic; -- M Signals
-        ALUSrc_IN, OutOp_IN, SWINT_IN, JMPCALL_IN, SWP_IN                                     : in  std_logic; -- EX Signals
-        ALUOPType_IN, JMPType_IN                                                              : in  std_logic_vector(1 downto 0); -- EX Signals
-        StackOpType_IN                                                                        : in  std_logic_vector(1 downto 0); -- M Signals
-        PC_IN, ReadData1_IN, ReadData2_IN, Immediate_IN                                       : in  std_logic_vector(31 downto 0); -- Data
-        Rsrc1_IN, Rsrc2_IN, Rdst_IN, Funct_IN                                                 : in  std_logic_vector(2 downto 0); -- Data
-        MemToReg_OUT, RegWrite_OUT                                                            : out std_logic; -- WB Signals
-        PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT, InputOp_OUT : out std_logic; -- M Signals
-        ALUSrc_OUT, OutOp_OUT, SWINT_OUT, JMPCALL_OUT, SWP_OUT                                : out std_logic; -- EX Signals
-        ALUOPType_OUT, JMPType_OUT                                                            : out std_logic_vector(1 downto 0); -- EX Signals
-        StackOpType_OUT                                                                       : out std_logic_vector(1 downto 0); -- M Signals
-        PC_OUT, ReadData1_OUT, ReadData2_OUT, Immediate_OUT                                   : out std_logic_vector(31 downto 0); -- Data
-        Rsrc1_OUT, Rsrc2_OUT, Rdst_OUT, Funct_OUT                                             : out std_logic_vector(2 downto 0) -- Data
+        clk                                                                        : in  std_logic;
+        rst                                                                        : in  std_logic;
+        en                                                                         : in  std_logic;
+        flush                                                                      : in  std_logic;
+        MemToReg_IN, RegWrite_IN                                                   : in  std_logic; -- WB Signals
+        PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN         : in  std_logic; -- M Signals
+        ALUSrc_IN, OutOp_IN, SWINT_IN, JMPCALL_IN, SECOND_SWP_IN, InputOp_IN       : in  std_logic; -- EX Signals
+        ALUOPType_IN, JMPType_IN                                                   : in  std_logic_vector(1 downto 0); -- EX Signals
+        StackOpType_IN                                                             : in  std_logic_vector(1 downto 0); -- M Signals
+        PC_IN, ReadData1_IN, ReadData2_IN, Immediate_IN                            : in  std_logic_vector(31 downto 0); -- Data
+        Rsrc1_IN, Rsrc2_IN, Rdst_IN, Funct_IN                                      : in  std_logic_vector(2 downto 0); -- Data
+        MemToReg_OUT, RegWrite_OUT                                                 : out std_logic; -- WB Signals
+        PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT   : out std_logic; -- M Signals
+        ALUSrc_OUT, OutOp_OUT, SWINT_OUT, JMPCALL_OUT, SECOND_SWP_OUT, InputOp_OUT : out std_logic; -- EX Signals
+        ALUOPType_OUT, JMPType_OUT                                                 : out std_logic_vector(1 downto 0); -- EX Signals
+        StackOpType_OUT                                                            : out std_logic_vector(1 downto 0); -- M Signals
+        PC_OUT, ReadData1_OUT, ReadData2_OUT, Immediate_OUT                        : out std_logic_vector(31 downto 0); -- Data
+        Rsrc1_OUT, Rsrc2_OUT, Rdst_OUT, Funct_OUT                                  : out std_logic_vector(2 downto 0) -- Data
     );
 end entity IDEXRegister;
 
@@ -46,13 +46,13 @@ begin
             StackOpType_OUT <= (others => '0');
 
             -- EX Signals
-            ALUSrc_OUT    <= '0';
-            OutOp_OUT     <= '0';
-            SWINT_OUT     <= '0';
-            JMPCALL_OUT   <= '0';
-            SWP_OUT       <= '0';
-            ALUOPType_OUT <= (others => '0');
-            JMPType_OUT   <= (others => '0');
+            ALUSrc_OUT     <= '0';
+            OutOp_OUT      <= '0';
+            SWINT_OUT      <= '0';
+            JMPCALL_OUT    <= '0';
+            SECOND_SWP_OUT <= '0';
+            ALUOPType_OUT  <= (others => '0');
+            JMPType_OUT    <= (others => '0');
 
             -- Data
             PC_OUT        <= (others => '0');
@@ -64,7 +64,7 @@ begin
             Rdst_OUT      <= (others => '0');
             Funct_OUT     <= (others => '0');
 
-        elsif rising_edge(clk) then
+        elsif falling_edge(clk) then
             if flush = '1' then
 
                 MemToReg_OUT <= '0';
@@ -79,13 +79,13 @@ begin
                 InputOp_OUT     <= '0';
                 StackOpType_OUT <= (others => '0');
 
-                ALUSrc_OUT    <= '0';
-                OutOp_OUT     <= '0';
-                SWINT_OUT     <= '0';
-                JMPCALL_OUT   <= '0';
-                SWP_OUT       <= '0';
-                ALUOPType_OUT <= (others => '0');
-                JMPType_OUT   <= (others => '0');
+                ALUSrc_OUT     <= '0';
+                OutOp_OUT      <= '0';
+                SWINT_OUT      <= '0';
+                JMPCALL_OUT    <= '0';
+                SECOND_SWP_OUT <= '0';
+                ALUOPType_OUT  <= (others => '0');
+                JMPType_OUT    <= (others => '0');
 
                 PC_OUT        <= (others => '0');
                 ReadData1_OUT <= (others => '0');
@@ -110,13 +110,13 @@ begin
                 InputOp_OUT     <= InputOp_IN;
                 StackOpType_OUT <= StackOpType_IN;
 
-                ALUSrc_OUT    <= ALUSrc_IN;
-                OutOp_OUT     <= OutOp_IN;
-                SWINT_OUT     <= SWINT_IN;
-                JMPCALL_OUT   <= JMPCALL_IN;
-                SWP_OUT       <= SWP_IN;
-                ALUOPType_OUT <= ALUOPType_IN;
-                JMPType_OUT   <= JMPType_IN;
+                ALUSrc_OUT     <= ALUSrc_IN;
+                OutOp_OUT      <= OutOp_IN;
+                SWINT_OUT      <= SWINT_IN;
+                JMPCALL_OUT    <= JMPCALL_IN;
+                SECOND_SWP_OUT <= SECOND_SWP_IN;
+                ALUOPType_OUT  <= ALUOPType_IN;
+                JMPType_OUT    <= JMPType_IN;
 
                 PC_OUT        <= PC_IN;
                 ReadData1_OUT <= ReadData1_IN;

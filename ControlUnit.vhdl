@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity ControlUnit is
     port(
         inst_bits : in std_logic_vector(4 downto 0);
-        EXMEM_MemOp, HWInt : in std_logic;
+        EXMEM_MemOp, HWInt, SECOND_Imm32_SIGNAL_IN : in std_logic;
         MemToReg, RegWrite, PCStore, MemOp_Inst, MemOp_Priority, MemRead : out std_logic;
         MemWrite, RET, RTI, InputOp, ALUSrc, OutOp : out std_logic;
         SWINT, JMPCALL, HLT, PCWrite, SWP, Imm32 : out std_logic;
@@ -17,13 +17,13 @@ end entity ControlUnit;
 
 architecture RTL of ControlUnit is
     
-    signal decoded_inst : std_logic_vector(31 downto 0);
-    signal Imm : std_logic;
-    signal RETURNINST : std_logic;
+    signal decoded_inst : std_logic_vector(31 downto 0) := (31 downto 0 => '0');
+    signal Imm : std_logic := '0';
+    signal RETURNINST : std_logic := '0';
     
 begin
 
-    decoded_inst(to_integer(unsigned(inst_bits))) <= '1';
+    decoded_inst <= (to_integer(unsigned(inst_bits)) => '1', others => '0');
 
     MemToReg <= decoded_inst(7) -- POP
         or decoded_inst(19); -- LDD
@@ -99,12 +99,14 @@ begin
     or decoded_inst(20) -- STD
     or decoded_inst(2) -- ALUOP
     or decoded_inst(9) -- IADD
-    or decoded_inst(6); -- PUSH
+    or decoded_inst(6) -- PUSH
+    or decoded_inst(31); -- SWAP
 
     ALUOPType(1) <= decoded_inst(19) -- LDD
     or decoded_inst(20) -- STD
     or decoded_inst(2) -- ALUOP
-    or decoded_inst(9); -- IADD
+    or decoded_inst(9) -- IADD
+    or decoded_inst(31); -- SWAP
 
     JMPType(0) <= decoded_inst(11) -- JZ
     or decoded_inst(13); -- JC
@@ -122,10 +124,10 @@ begin
     or decoded_inst(14) -- JMP
     or decoded_inst(9); -- IADD
 
-    Imm32 <= Imm;
+    Imm32 <= (Imm and not SECOND_Imm32_SIGNAL_IN);
     MemOp_Priority <= (EXMEM_MemOp and not Imm) or HWInt;
-    IFID_EN <= Imm or (EXMEM_MemOp and not Imm) or RETURNINST;
-    IDEX_EN <= Imm;
-    EXMEM_EN <= Imm;
-    MEMWB_EN <= Imm;
+    IFID_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) or (EXMEM_MemOp and not Imm) or RETURNINST;
+    IDEX_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN);
+    EXMEM_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN);
+    MEMWB_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN);
 end architecture RTL;

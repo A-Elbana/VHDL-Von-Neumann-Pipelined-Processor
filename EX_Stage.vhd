@@ -17,11 +17,13 @@ entity EX_Stage is
         CCR                                   : out std_logic_vector(2 downto 0);
         M_out_Control                         : out std_logic_vector(7 downto 0);
         WB_out_Control                        : out std_logic_vector(1 downto 0);
-        ConditionalJMP                        : out std_logic
+        ConditionalJMP                        : out std_logic;
+        EX_Imm : out std_logic_vector(31 downto 0)
     );
 end entity EX_Stage;
 
 architecture EX_Stage_Arch of EX_Stage is
+
     component ALU is
         GENERIC(n : INTEGER := 32);
         --CCR[0]=Z-flag
@@ -62,6 +64,7 @@ begin
     M_out_Control      <= M_control;
     StoreData          <= ReadData2;
     PC_Out             <= PC;
+    EX_Imm <= Imm;
     alu_inst : ALU
         generic map(
             n => 32

@@ -32,7 +32,7 @@ begin
     SUB_RES        <= std_logic_vector(SUB_RES_Vector(n - 1 downto 0));
     Carry_SUB      <= std_logic(ADD_RES_Vector(32));
 
-    INC_RES_Vector <= resize(unsigned(A), n + 1);
+    INC_RES_Vector <= resize(unsigned(A), n + 1) + to_unsigned(1, n+1);
     INC_RES        <= std_logic_vector(INC_RES_Vector(n - 1 downto 0));
     Carry_INC      <= std_logic(ADD_RES_Vector(32));
 
