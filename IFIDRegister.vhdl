@@ -29,7 +29,7 @@ begin
             Instruction_OUT  <= (others => '0');
             SWP_OUT          <= '0';
             SECOND_Imm32_SIGNAL_OUT <= '0';
-        elsif falling_edge(clk) then
+        elsif rising_edge(clk) then
             if flush = '1' then
                 Immediate_OUT    <= (others => '0');
                 PC_OUT           <= (others => '0');

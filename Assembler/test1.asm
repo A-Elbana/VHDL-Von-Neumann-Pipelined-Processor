@@ -1,0 +1,24 @@
+IADD r0,r0,0xAA
+
+
+
+IADD r1,r1,0x55
+
+
+
+IADD r2,r2,0x2
+
+NOP
+
+
+ADD R3,R0,R1
+
+
+
+AND R4,R0,R1
+
+SETC
+
+MOV R5,R0
+
+SUB R6,R2,R3

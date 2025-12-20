@@ -100,13 +100,15 @@ begin
     or decoded_inst(2) -- ALUOP
     or decoded_inst(9) -- IADD
     or decoded_inst(6) -- PUSH
-    or decoded_inst(31); -- SWAP
+    or decoded_inst(31) -- SWAP
+    or decoded_inst(30); -- SETC
 
     ALUOPType(1) <= decoded_inst(19) -- LDD
     or decoded_inst(20) -- STD
     or decoded_inst(2) -- ALUOP
     or decoded_inst(9) -- IADD
-    or decoded_inst(31); -- SWAP
+    or decoded_inst(31) -- SWAP
+    or decoded_inst(30); -- SETC
 
     JMPType(0) <= decoded_inst(11) -- JZ
     or decoded_inst(13); -- JC

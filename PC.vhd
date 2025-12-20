@@ -17,8 +17,8 @@ BEGIN
     PROCESS(clk, reset)
     BEGIN
         IF reset = '1' THEN
-            PC_Out <= (OTHERS => '0');
-        ELSIF rising_edge(clk) THEN
+            PC_Out <= PC_IN;
+        ELSIF clk = '1' and clk'event THEN
             IF PCWrite = '0' THEN
                 PC_Out <= PC_IN;
             END IF;

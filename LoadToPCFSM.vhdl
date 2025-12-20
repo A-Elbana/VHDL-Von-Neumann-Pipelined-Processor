@@ -6,7 +6,7 @@ entity LoadToPCFSM is
     port(
         clk             : in  std_logic;
         rst             : in  std_logic;
-        interrupt_index : in  std_logic_vector(1 downto 0);
+        interrupt_index : in  std_logic;
         memOp           : in  std_logic;
         INT             : in  std_logic;
         LoadPC          : out std_logic;
@@ -38,7 +38,7 @@ begin
             int_index <= (others => '0');
         elsif rising_edge(clk) then
             if INT = '1' then
-                int_index <= interrupt_index;
+                int_index <= '0' & interrupt_index;
             end if;
 
         end if;

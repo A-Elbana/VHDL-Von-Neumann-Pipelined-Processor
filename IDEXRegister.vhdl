@@ -64,7 +64,7 @@ begin
             Rdst_OUT      <= (others => '0');
             Funct_OUT     <= (others => '0');
 
-        elsif falling_edge(clk) then
+        elsif rising_edge(clk) then
             if flush = '1' then
 
                 MemToReg_OUT <= '0';
