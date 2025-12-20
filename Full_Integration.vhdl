@@ -13,12 +13,17 @@ architecture RTL of Full_Integration is
     signal HWInt          : std_logic                     := '0';
     signal INPort         : std_logic_vector(31 downto 0) := x"ABABABAB";
     signal OUTPort        : std_logic_vector(31 downto 0);
-    signal WB_D_OUT       : std_logic_vector(167 downto 0);
+    signal WB_D_OUT       : std_logic_vector(199 downto 0);
     signal IDEX_REG_OUT   : std_logic_vector(159 downto 0);
     signal EX_OUT         : std_logic_vector(141 downto 0);
     signal EX_MEM_REG_OUT : std_logic_vector(111 downto 0);
     signal IF_MEM_OUT     : std_logic_vector(167 downto 0);
     signal MEM_WB_REG_OUT : std_logic_vector(68 downto 0);
+
+    signal First_Operand_Data_Signal  : std_logic_vector(31 downto 0);
+    signal Second_Operand_Data_Signal : std_logic_vector(31 downto 0);
+    signal First_Operand_Signal       : std_logic_vector(1 downto 0);
+    signal Second_Operand_Signal      : std_logic_vector(1 downto 0);
 
 begin
     IFIDRegister_inst : entity work.IFIDRegister
@@ -90,6 +95,7 @@ begin
             IDEX_EN                => WB_D_OUT(1),
             EXMEM_EN               => WB_D_OUT(166),
             MEMWB_EN               => WB_D_OUT(167),
+            Write_Back_Data_OUT    => WB_D_OUT(199 downto 168),
             SWP                    => WB_D_OUT(162)
         );
 
@@ -156,8 +162,8 @@ begin
             clk            => clk,
             rst            => rst,
             PC             => IDEX_REG_OUT(31 downto 0),
-            ReadData1      => IDEX_REG_OUT(63 downto 32),
-            ReadData2      => IDEX_REG_OUT(95 downto 64),
+            ReadData1      => First_Operand_Data_Signal,
+            ReadData2      => Second_Operand_Data_Signal,
             Imm            => IDEX_REG_OUT(127 downto 96),
             INPort         => INPort,
             func           => IDEX_REG_OUT(130 downto 128),
@@ -281,4 +287,25 @@ begin
             Rdst_OUT      => MEM_WB_REG_OUT(68 downto 66)
         );
 
+    forwardunit_inst : entity work.forwardUnit
+        port map(
+            ID_EX_Rsrc1     => IDEX_REG_OUT(136 downto 134),
+            ID_EX_Rsrc2     => IDEX_REG_OUT(139 downto 137),
+            EX_MEM_Rdst     => EX_MEM_REG_OUT(111 downto 109),
+            MEM_WB_Rdst     => MEM_WB_REG_OUT(68 downto 66),
+            EX_MEM_RegWrite => EX_MEM_REG_OUT(5),
+            MEM_WB_RegWrite => MEM_WB_REG_OUT(1),
+            ID_EX_Swap      => IDEX_REG_OUT(155),
+            ForwardA        => First_Operand_Signal,
+            ForwardB        => Second_Operand_Signal
+        );
+    ---------------Forwarding--------------------------------
+
+    First_Operand_Data_Signal <= WB_D_OUT(199 downto 168) when First_Operand_Signal = "01" else
+                                 EX_MEM_REG_OUT(105 downto 74) when First_Operand_Signal = "10" else
+                                 IDEX_REG_OUT(63 downto 32);
+
+    Second_Operand_Data_Signal <= WB_D_OUT(199 downto 168) when Second_Operand_Signal = "01" else
+                                  EX_MEM_REG_OUT(105 downto 74) when Second_Operand_Signal = "10" else
+                                  IDEX_REG_OUT(95 downto 64);
 end architecture RTL;

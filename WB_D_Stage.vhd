@@ -17,7 +17,7 @@ entity WB_D_Stage is
         MemToReg, MEMWBRegWrite_IN                                               : in  std_logic;
         SECOND_Imm32_SIGNAL_IN                                                   : in  std_logic;
         MEMWBRegWrite_OUT                                                        : out std_logic;
-        PC_Out, ReadData1, ReadData2, Imm_32_OUT                                 : out std_logic_vector(31 downto 0);
+        PC_Out, ReadData1, ReadData2, Imm_32_OUT, Write_Back_Data_OUT            : out std_logic_vector(31 downto 0);
         func, Rdst, Rsrc1, Rsrc2                                                 : out std_logic_vector(2 downto 0);
         --control unit in/out signals
         EXMEM_MemOp, HWInt                                                       : in  std_logic;
@@ -47,40 +47,40 @@ begin
     ControlUnit_inst : entity work.ControlUnit
         port map(
             SECOND_Imm32_SIGNAL_IN => SECOND_Imm32_SIGNAL_IN,
-            inst_bits      => inst(31 downto 27),
-            EXMEM_MemOp    => EXMEM_MemOp,
-            HWInt          => HWInt,
-            MemToReg       => MemToReg_OUT,
-            RegWrite       => RegWrite_OUT,
-            PCStore        => PCStore,
-            MemOp_Inst     => MemOp_Inst,
-            MemOp_Priority => MemOp_Priority,
-            MemRead        => MemRead,
-            MemWrite       => MemWrite,
-            RET            => RET,
-            RTI            => RTI,
-            InputOp        => InputOp,
-            ALUSrc         => ALUSrc,
-            OutOp          => OutOp,
-            SWINT          => SWINT,
-            JMPCALL        => JMPCALL,
-            HLT            => HLT,
-            PCWrite        => PCWrite,
-            SWP            => SWP,
-            Imm32          => Imm32_SIGNAL,
-            IFID_EN        => IFID_EN,
-            IDEX_EN        => IDEX_EN,
-            EXMEM_EN       => EXMEM_EN,
-            MEMWB_EN       => MEMWB_EN,
-            StackOpType    => StackOpType,
-            ALUOPType      => ALUOPType,
-            JMPType        => JMPType
+            inst_bits              => inst(31 downto 27),
+            EXMEM_MemOp            => EXMEM_MemOp,
+            HWInt                  => HWInt,
+            MemToReg               => MemToReg_OUT,
+            RegWrite               => RegWrite_OUT,
+            PCStore                => PCStore,
+            MemOp_Inst             => MemOp_Inst,
+            MemOp_Priority         => MemOp_Priority,
+            MemRead                => MemRead,
+            MemWrite               => MemWrite,
+            RET                    => RET,
+            RTI                    => RTI,
+            InputOp                => InputOp,
+            ALUSrc                 => ALUSrc,
+            OutOp                  => OutOp,
+            SWINT                  => SWINT,
+            JMPCALL                => JMPCALL,
+            HLT                    => HLT,
+            PCWrite                => PCWrite,
+            SWP                    => SWP,
+            Imm32                  => Imm32_SIGNAL,
+            IFID_EN                => IFID_EN,
+            IDEX_EN                => IDEX_EN,
+            EXMEM_EN               => EXMEM_EN,
+            MEMWB_EN               => MEMWB_EN,
+            StackOpType            => StackOpType,
+            ALUOPType              => ALUOPType,
+            JMPType                => JMPType
         );
 
     --Select the data source for the write back from Memory or ALU result   
-    Write_Back_Data <= ALU_Data WHEN MemToReg = '0' ELSE
-                       Memory_Data WHEN MemToReg = '1';
-
+    Write_Back_Data     <= ALU_Data WHEN MemToReg = '0' ELSE
+                           Memory_Data WHEN MemToReg = '1';
+    Write_Back_Data_OUT <= Write_Back_Data;
     regfile_inst : regFile
         port map(
             clk       => clk,
