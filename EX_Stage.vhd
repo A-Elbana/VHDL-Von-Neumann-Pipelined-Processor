@@ -14,7 +14,7 @@ entity EX_Stage is
         clk                                   : in  std_logic;
         rst                                   : in  std_logic;
         MEM_CCR_IN                            : in  std_logic_vector(2 downto 0);
-        MEM_RTI                            : in  std_logic;
+        MEM_RTI                               : in  std_logic;
         PC_Out, ALUResult, StoreData, OUTPORT : out std_logic_vector(31 downto 0);
         CCR                                   : out std_logic_vector(2 downto 0);
         M_out_Control                         : out std_logic_vector(7 downto 0);
@@ -52,12 +52,13 @@ architecture EX_Stage_Arch of EX_Stage is
         );
     end component Flags_Reg;
 
-    signal ALU_Second_Operand  : std_logic_vector(31 downto 0) := (others => '0');
-    signal ALUResult_Signal    : std_logic_vector(31 downto 0) := (others => '0');
-    signal CCR_singal          : std_logic_vector(2 downto 0)  := (others => '0');
-    signal CCR_singal_Out      : std_logic_vector(2 downto 0)  := (others => '0');
-    signal Carry_Reg_en_signal : std_logic_vector(1 downto 0)  := (others => '0');
-    signal OUTPortData         : std_logic_vector(31 downto 0) := (others => '0');
+    signal ALU_Second_Operand   : std_logic_vector(31 downto 0) := (others => '0');
+    signal ALUResult_Signal     : std_logic_vector(31 downto 0) := (others => '0');
+    signal CCR_singal           : std_logic_vector(2 downto 0)  := (others => '0');
+    signal CCR_singal_Out       : std_logic_vector(2 downto 0)  := (others => '0');
+    signal ConditionalJMPSIGNAL : std_logic  := '0';
+    signal Carry_Reg_en_signal  : std_logic_vector(1 downto 0)  := (others => '0');
+    signal OUTPortData          : std_logic_vector(31 downto 0) := (others => '0');
 
 begin
 
@@ -84,7 +85,7 @@ begin
     ALUResult          <= ALUResult_Signal WHEN InputOp = '0' ELSE
                           INPort WHEN InputOp = '1';
 
-    flags_reg_inst : Flags_Reg
+    flags_reg_inst : entity work.Flags_Reg
         port map(
             clk             => clk,
             rst             => rst,
@@ -92,6 +93,8 @@ begin
             IN_FLAGS_MEMORY => MEM_CCR_IN,
             ALU_ENABLE      => Carry_Reg_en_signal,
             MEMORY_ENABLE   => MEM_RTI,
+            ConditionalJMP  => ConditionalJMPSIGNAL,
+            JMPType         => JumpType,
             CCR             => CCR_singal_Out
         );
     CCR            <= CCR_singal_Out;
@@ -99,7 +102,8 @@ begin
     --CCR[0]=Z-flag
     --CCR[1]=N-flag
     --CCR[2]=C-flag
-    ConditionalJMP <= CCR_singal_Out(0) WHEN JumpType = "01" ELSE
+    ConditionalJMP <= ConditionalJMPSIGNAL;
+    ConditionalJMPSIGNAL <= CCR_singal_Out(0) WHEN JumpType = "01" ELSE
                       CCR_singal_Out(1) WHEN JumpType = "10" ELSE
                       CCR_singal_Out(2) WHEN JumpType = "11" ELSE
                       '0';

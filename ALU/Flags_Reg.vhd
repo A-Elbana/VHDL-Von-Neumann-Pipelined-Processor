@@ -10,6 +10,8 @@ entity Flags_Reg is
         IN_FLAGS_MEMORY : in  std_logic_vector(2 downto 0);
         ALU_ENABLE      : in  std_logic_vector(1 downto 0);
         MEMORY_ENABLE   : in  std_logic;
+        ConditionalJMP  : in std_logic;
+        JMPType         : in std_logic_vector(1 downto 0);
         CCR             : out std_logic_vector(2 downto 0)
     );
 end entity Flags_Reg;
@@ -25,7 +27,16 @@ begin
             Zero     <= '0';
             Negative <= '0';
         elsif rising_edge(clk) then
-
+            if ConditionalJMP = '1'  then
+                if JMPType = "01" then
+                    Zero    <= '0';
+                elsif JMPType = "10" then
+                    Negative    <= '0';
+                elsif JMPType = "11" then
+                    Carry    <= '0';
+                end if;
+            end if;
+            
             if MEMORY_ENABLE = '1' then
                 Carry    <= IN_FLAGS_MEMORY(2);
                 Negative <= IN_FLAGS_MEMORY(1);
@@ -39,7 +50,6 @@ begin
             elsif ALU_ENABLE = "10" then
                 Negative <= IN_FLAGS_ALU(1);
                 Zero     <= IN_FLAGS_ALU(0);
-
             end if;
 
         end if;

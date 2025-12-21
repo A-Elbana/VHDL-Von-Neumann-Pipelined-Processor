@@ -8,7 +8,7 @@ sim:/full_integration/rst  \
 sim:/full_integration/HWINT \
 sim:/full_integration/INPort \
 sim:/full_integration/OUTPort 
-add wave -position insertpoint -radix decimal sim:/full_integration/IF_MEM_Stage_inst/PC_OUT
+add wave -position insertpoint -radix hexadecimal sim:/full_integration/IF_MEM_Stage_inst/PC_OUT
 add wave -position insertpoint  \
 sim:/full_integration/WB_D_Stage_inst/MemOp_Priority \
 sim:/full_integration/IFIDEN \
@@ -35,13 +35,13 @@ add wave -divider "IFID_Reg_Outputs"
 add wave -position insertpoint  \
 sim:/full_integration/IFIDRegister_inst/SWP_OUT \
 sim:/full_integration/IFIDRegister_inst/Immediate_OUT
-add wave -position insertpoint -radix decimal sim:/full_integration/IFIDRegister_inst/PC_OUT
+add wave -position insertpoint -radix hexadecimal sim:/full_integration/IFIDRegister_inst/PC_OUT
 add wave -position insertpoint \
 sim:/full_integration/IFIDRegister_inst/Instruction_OUT
 add wave -divider "WB_D_Outputs"
 add wave -position insertpoint  \
 sim:/full_integration/WB_D_Stage_inst/MEMWBRegWrite_OUT 
-add wave -position insertpoint -radix decimal sim:/full_integration/WB_D_Stage_inst/PC_Out 
+add wave -position insertpoint -radix hexadecimal sim:/full_integration/WB_D_Stage_inst/PC_Out 
 add wave -position insertpoint \
 sim:/full_integration/WB_D_Stage_inst/ReadData1 \
 sim:/full_integration/WB_D_Stage_inst/ReadData2 \
@@ -95,7 +95,7 @@ sim:/full_integration/IDEXRegister_inst/InputOp_OUT \
 sim:/full_integration/IDEXRegister_inst/ALUOPType_OUT \
 sim:/full_integration/IDEXRegister_inst/JMPType_OUT \
 sim:/full_integration/IDEXRegister_inst/StackOpType_OUT
-add wave -position insertpoint -radix decimal sim:/full_integration/IDEXRegister_inst/PC_OUT 
+add wave -position insertpoint -radix hexadecimal sim:/full_integration/IDEXRegister_inst/PC_OUT 
 add wave -position insertpoint \
 sim:/full_integration/IDEXRegister_inst/ReadData1_OUT \
 sim:/full_integration/IDEXRegister_inst/ReadData2_OUT \
@@ -105,7 +105,7 @@ sim:/full_integration/IDEXRegister_inst/Rsrc2_OUT \
 sim:/full_integration/IDEXRegister_inst/Rdst_OUT \
 sim:/full_integration/IDEXRegister_inst/Funct_OUT
 add wave -divider "ALU_Outputs"
-add wave -position insertpoint -radix decimal \
+add wave -position insertpoint -radix hexadecimal \
 sim:/full_integration/EX_Stage_inst/PC_Out 
 add wave -position insertpoint  \
 sim:/full_integration/EX_Stage_inst/PC_Out \
@@ -129,7 +129,7 @@ sim:/full_integration/EXMEMRegister_inst/RET_OUT \
 sim:/full_integration/EXMEMRegister_inst/RTI_OUT \
 sim:/full_integration/EXMEMRegister_inst/SWINT_OUT \
 sim:/full_integration/EXMEMRegister_inst/StackOpType_OUT
-add wave -position insertpoint -radix decimal sim:/full_integration/EXMEMRegister_inst/PC_OUT
+add wave -position insertpoint -radix hexadecimal sim:/full_integration/EXMEMRegister_inst/PC_OUT
 add wave -position insertpoint \
 sim:/full_integration/EXMEMRegister_inst/StoreData_OUT \
 sim:/full_integration/EXMEMRegister_inst/ALUResult_OUT \
@@ -143,7 +143,7 @@ sim:/full_integration/IF_MEM_Stage_inst/EXMEM_RTI \
 sim:/full_integration/IF_MEM_Stage_inst/EXMEM_CCR_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/MemToReg_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/RegWrite_OUT
-add wave -position insertpoint -radix decimal sim:/full_integration/IF_MEM_Stage_inst/PC_OUT
+add wave -position insertpoint -radix hexadecimal sim:/full_integration/IF_MEM_Stage_inst/PC_OUT
 add wave -position insertpoint \
 sim:/full_integration/IF_MEM_Stage_inst/readData_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/ALUResult_OUT \
@@ -163,10 +163,3 @@ force -freeze sim:/full_integration/rst 1 0
 run 50 ps
 force -freeze sim:/full_integration/rst 0 0
 run 50 ps
-run
-run
-run
-run
-force -freeze sim:/full_integration/HWInt 1 0
-run
-force -freeze sim:/full_integration/HWInt 0 0
