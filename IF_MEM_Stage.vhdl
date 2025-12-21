@@ -20,7 +20,7 @@ entity IF_MEM_Stage is
         IFID_JMPCALL                                                       : in  std_logic;
         IFID_SWP                                                           : in  std_logic;
         IFID_Imm32_SIGNAL                                                  : in  std_logic;
-        IFID_Rsrc                                                          : in  std_logic_vector(2 downto 0);
+        IFID_Rsrc1                                                         : in  std_logic_vector(2 downto 0);
         IFID_Rdst                                                          : in  std_logic_vector(2 downto 0);
         IF_Imm                                                             : out std_logic_vector(31 downto 0);
         EXMEM_MemOp_Inst, EXMEM_RTI                                        : out std_logic;
@@ -28,7 +28,8 @@ entity IF_MEM_Stage is
         PC_OUT, readData_OUT, ALUResult_OUT                                : out std_logic_vector(31 downto 0); -- Data
         writeAddr_OUT                                                      : out std_logic_vector(2 downto 0); -- Data
         IFID_FLUSH                                                         : out std_logic;
-        Fetched_Inst                                                       : out std_logic_vector(31 downto 0)
+        Fetched_Inst                                                       : out std_logic_vector(31 downto 0);
+        RET_OUT                                                            : out std_logic
     );
 end entity IF_MEM_Stage;
 
@@ -43,7 +44,7 @@ architecture RTL of IF_MEM_Stage is
     signal writeData_MUX               : std_logic_vector(31 downto 0);
     signal PC_REG_IN                   : std_logic_vector(31 downto 0);
     signal PC_REG_OUT                  : std_logic_vector(31 downto 0);
-    signal JMPADDRRESS                 : std_logic_vector(31 downto 0);
+    signal JMPADDRESS                 : std_logic_vector(31 downto 0);
     signal PC_TO_BE_STORED_AND_FLAGS   : std_logic_vector(31 downto 0);
     signal STACKPOINTER                : std_logic_vector(31 downto 0);
     signal INTINDEX                    : std_logic_vector(1 downto 0);
@@ -53,15 +54,15 @@ architecture RTL of IF_MEM_Stage is
     signal demuxInst                   : std_logic_vector(31 downto 0);
     signal demuxInst2                  : std_logic_vector(31 downto 0);
     signal SECOND_SWP_INST             : std_logic_vector(31 downto 0);
-    signal PC_IN_ADD_1                 : std_logic_vector(31 downto 0);
+    signal PC_IN_ADD                 : std_logic_vector(31 downto 0);
     signal intermediate, intermediate2 : std_logic_vector(31 downto 0);
     signal StackOpType_HWINT_IN        : std_logic_vector(1 downto 0);
 
 begin
-    PC_IN_ADD_1 <= std_logic_vector(unsigned(PC_IN) + to_unsigned(1, 32));
+    PC_IN_ADD     <= std_logic_vector(unsigned(PC_IN) + to_unsigned(2, 32));
     -- TODO IFID Register INs (Demuxes and Muxes involving IFID_SWP and IFID_Imm32)
-
-    SECOND_SWP_INST <= "00010" & IFID_Rsrc & IFID_Rdst & "000000000000000000" & "011";
+    RET_OUT         <= RET_IN;
+    SECOND_SWP_INST <= "00010" & IFID_Rsrc1 & IFID_Rdst & "000000000000000000" & "011";
     IF_Imm          <= readData when IFID_Imm32_SIGNAL = '1' else (others => '0');
     demuxInst2      <= readData when MemOp_Priority_IN = '0' else (others => '0');
     demuxInst       <= demuxInst2 when IFID_Imm32_SIGNAL = '0' else (others => '0');
@@ -87,8 +88,8 @@ begin
             IFID_FLUSH      => IFID_FLUSH
         );
     PC_OUT        <= PC_REG_OUT;
-    JMPADDRRESS   <= IDEX_Imm when IDEX_ConditionalJMP = '1' else IFID_Imm;
-    intermediate2 <= JMPADDRRESS when (IFID_JMPCALL or IDEX_ConditionalJMP) = '1' else std_logic_vector(unsigned(PC_REG_OUT) + to_unsigned(1, 32));
+    JMPADDRESS   <= IDEX_Imm when IDEX_ConditionalJMP = '1' else readData;
+    intermediate2 <= JMPADDRESS when (IFID_JMPCALL or IDEX_ConditionalJMP) = '1' else std_logic_vector(unsigned(PC_REG_OUT) + to_unsigned(1, 32));
     intermediate  <= readData when (RET_IN or LoadPC) = '1' else intermediate2;
     PC_REG_IN     <= readData when rst = '1' else intermediate;
     PC_inst : entity work.PC
@@ -115,7 +116,7 @@ begin
     Address_MUX2_Intermediate <= Address_MUX1 when MemOp_Priority_IN = '1' else PC_REG_OUT;
     Address_MUX2              <= (31 downto 2 => '0') & INTINDEX when LoadPC = '1' else Address_MUX2_Intermediate;
     Address                   <= (31 downto 0 => '0') WHEN rst = '1' ELSE Address_MUX2;
-    PC_TO_BE_STORED_AND_FLAGS <= CCR_IN & PC_IN_ADD_1(28 downto 0);
+    PC_TO_BE_STORED_AND_FLAGS <= CCR_IN & PC_IN_ADD(28 downto 0);
     writeData_MUX             <= PC_TO_BE_STORED_AND_FLAGS when PCStore_IN = '1' else StoreData_IN;
     writeData                 <= CCR_IN & PC_REG_OUT(28 downto 0) when HWInt = '1' else writeData_MUX;
     Memory_inst : entity work.Memory

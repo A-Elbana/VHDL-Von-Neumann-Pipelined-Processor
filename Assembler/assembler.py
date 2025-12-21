@@ -125,7 +125,7 @@ class Assembler:
         return [
             self.create_instruction_word(
                 "00010",
-                {(31, 27): "00010", (26, 24): rdst, (23, 21): rdst, (2, 0): "001"},
+                {(31, 27): "00010", (26, 24): rdst, (23, 21): rdst, (20, 18): rdst, (2, 0): "001"},
             )
         ]
 
@@ -137,7 +137,7 @@ class Assembler:
         return [
             self.create_instruction_word(
                 "00010",
-                {(31, 27): "00010", (26, 24): rdst, (23, 21): rdst, (2, 0): "010"},
+                {(31, 27): "00010", (26, 24): rdst, (23, 21): rdst, (20, 18): rdst, (2, 0): "010"},
             )
         ]
 
@@ -150,7 +150,7 @@ class Assembler:
         return [
             self.create_instruction_word(
                 "00010",
-                {(31, 27): "00010", (26, 24): rdst, (23, 21): rsrc, (2, 0): "011"},
+                {(31, 27): "00010", (26, 24): rdst, (23, 21): rsrc, (20, 18): rsrc, (2, 0): "011"},
             )
         ]
 
@@ -176,7 +176,7 @@ class Assembler:
         return [
             self.create_instruction_word(
                 "11111",
-                {(31, 27): "11111", (26, 24): rdst, (23, 21): rsrc, (2, 0): "011"},
+                {(31, 27): "11111", (26, 24): rdst, (23, 21): rsrc, (20, 18): rsrc, (2, 0): "011"},
             )
         ]
 

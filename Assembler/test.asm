@@ -63,11 +63,6 @@ MOV R6, R7            # R6 = R7
 MOV R1, R0            # R1 = R0
 MOV R3, R2            # R3 = R2
 
-# Move with set flags
-MOVS R0, R1           # R0 = R1 (set flags)
-MOVS R2, R3           # R2 = R3 (set flags)
-MOVS R4, R5           # R4 = R5 (set flags)
-
 # Swap operations
 SWAP R0, R1           # Swap R0 and R1
 SWAP R2, R3           # Swap R2 and R3

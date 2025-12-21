@@ -18,33 +18,13 @@ end entity forwardUnit;
 
 architecture forwardUnitArch of forwardUnit is
 begin
-    process(ID_EX_Rsrc1, ID_EX_Rsrc2, EX_MEM_Rdst, MEM_WB_Rdst, EX_MEM_RegWrite, MEM_WB_RegWrite, ID_EX_Swap)
-    begin
-        ForwardA <= "00";
-        ForwardB <= "00";
+    -- Combinational Assignment for ForwardA
+    ForwardA <= "10" when (EX_MEM_RegWrite = '1' and EX_MEM_Rdst = ID_EX_Rsrc1 and ID_EX_Swap = '0') else
+                "01" when (MEM_WB_RegWrite = '1' and MEM_WB_Rdst = ID_EX_Rsrc1) else
+                "00";
 
-
-        if (EX_MEM_RegWrite = '1' and EX_MEM_Rdst = ID_EX_Rsrc1) then
-            if (ID_EX_Swap = '1') then
-                ForwardA <= "00";
-            else
-                ForwardA <= "10"; 
-            end if;
-            
-        elsif (MEM_WB_RegWrite = '1' and MEM_WB_Rdst = ID_EX_Rsrc1) then
-            ForwardA <= "01";
-        end if;
-
-        if (EX_MEM_RegWrite = '1' and EX_MEM_Rdst = ID_EX_Rsrc2) then
-            if (ID_EX_Swap = '1') then
-                ForwardB <= "00";
-            else
-                ForwardB <= "10";
-            end if;
-            
-        elsif (MEM_WB_RegWrite = '1' and MEM_WB_Rdst = ID_EX_Rsrc2) then
-            ForwardB <= "01";
-        end if;
-        
-    end process;
+    -- Combinational Assignment for ForwardB
+    ForwardB <= "10" when (EX_MEM_RegWrite = '1' and EX_MEM_Rdst = ID_EX_Rsrc2 and ID_EX_Swap = '0') else
+                "01" when (MEM_WB_RegWrite = '1' and MEM_WB_Rdst = ID_EX_Rsrc2) else
+                "00";
 end architecture forwardUnitArch;

@@ -13,25 +13,37 @@ architecture RTL of Full_Integration is
     signal HWInt          : std_logic                     := '0';
     signal INPort         : std_logic_vector(31 downto 0) := x"ABABABAB";
     signal OUTPort        : std_logic_vector(31 downto 0);
-    signal WB_D_OUT       : std_logic_vector(199 downto 0);
+    signal WB_D_OUT       : std_logic_vector(200 downto 0);
     signal IDEX_REG_OUT   : std_logic_vector(159 downto 0);
     signal EX_OUT         : std_logic_vector(141 downto 0);
     signal EX_MEM_REG_OUT : std_logic_vector(111 downto 0);
-    signal IF_MEM_OUT     : std_logic_vector(167 downto 0);
+    signal IF_MEM_OUT     : std_logic_vector(168 downto 0);
     signal MEM_WB_REG_OUT : std_logic_vector(68 downto 0);
+    signal HU_OUT : std_logic_vector(4 downto 0);
+    
 
     signal First_Operand_Data_Signal  : std_logic_vector(31 downto 0);
     signal Second_Operand_Data_Signal : std_logic_vector(31 downto 0);
     signal First_Operand_Signal       : std_logic_vector(1 downto 0);
     signal Second_Operand_Signal      : std_logic_vector(1 downto 0);
+    signal PCWrite : std_logic;
+    signal IFIDEN : std_logic;
+    signal IFIDFLUSH : std_logic;
+    
+
+    ------ HU -------
+    signal Rsrc1_Used, Rsrc2_Used : std_logic;
 
 begin
+    PCWrite <= HU_OUT(4) or WB_D_OUT(165);
+    IFIDEN <= HU_OUT(0) or WB_D_OUT(0);
+    IFIDFLUSH <= HU_OUT(1) or IF_MEM_OUT(135);
     IFIDRegister_inst : entity work.IFIDRegister
         port map(
             clk                     => clk,
             rst                     => rst,
-            en                      => WB_D_OUT(0),
-            flush                   => IF_MEM_OUT(135),
+            en                      => IFIDEN,
+            flush                   => IFIDFLUSH,
             SWP_IN                  => WB_D_OUT(162),
             SECOND_Imm32_SIGNAL_IN  => WB_D_OUT(163),
             Imm32_SIGNAL            => WB_D_OUT(163),
@@ -89,14 +101,16 @@ begin
             JMPType                => WB_D_OUT(19 downto 18),
             StackOpType            => WB_D_OUT(21 downto 20),
             Imm32_SIGNAL           => WB_D_OUT(163),
-            HLT                    => open,
+            HLT                    => WB_D_OUT(200),
             PCWrite                => WB_D_OUT(165),
             IFID_EN                => WB_D_OUT(0),
             IDEX_EN                => WB_D_OUT(1),
             EXMEM_EN               => WB_D_OUT(166),
             MEMWB_EN               => WB_D_OUT(167),
             Write_Back_Data_OUT    => WB_D_OUT(199 downto 168),
-            SWP                    => WB_D_OUT(162)
+            SWP                    => WB_D_OUT(162),
+            Rsrc1_Used             => Rsrc1_Used,
+            Rsrc2_Used             => Rsrc2_Used
         );
 
     IDEXRegister_inst : entity work.IDEXRegister
@@ -104,7 +118,7 @@ begin
             clk             => clk,
             rst             => rst,
             en              => WB_D_OUT(1),
-            flush           => '0',
+            flush           => HU_OUT(2),
             MemToReg_IN     => WB_D_OUT(2),
             RegWrite_IN     => WB_D_OUT(3),
             PCStore_IN      => WB_D_OUT(4),
@@ -167,15 +181,11 @@ begin
             Imm            => IDEX_REG_OUT(127 downto 96),
             INPort         => INPort,
             func           => IDEX_REG_OUT(130 downto 128),
-            Rdst           => IDEX_REG_OUT(133 downto 131),
-            Rsrc1          => IDEX_REG_OUT(136 downto 134),
-            Rsrc2          => IDEX_REG_OUT(139 downto 137),
             M_control      => IDEX_REG_OUT(149 downto 142),
             WB_control     => IDEX_REG_OUT(141 downto 140),
             InputOp        => IDEX_REG_OUT(150),
             AluSrc         => IDEX_REG_OUT(151),
             OutOP          => IDEX_REG_OUT(152),
-            Swap           => IDEX_REG_OUT(155),
             AluOP          => IDEX_REG_OUT(157 downto 156),
             JumpType       => IDEX_REG_OUT(159 downto 158),
             M_out_Control  => EX_OUT(7 downto 0),
@@ -194,7 +204,7 @@ begin
             clk             => clk,
             rst             => rst,
             en              => WB_D_OUT(166),
-            flush           => '0',
+            flush           => HU_OUT(3),
             PCStore_IN      => EX_OUT(0),
             MemOp_Inst_IN   => EX_OUT(1),
             MemRead_IN      => EX_OUT(2),
@@ -231,7 +241,7 @@ begin
             rst                 => rst,
             HWInt               => HWInt,
             MemOp_Priority_IN   => WB_D_OUT(164),
-            PCWrite             => WB_D_OUT(165),
+            PCWrite             => PCWrite,
             SWInt               => WB_D_OUT(13),
             interrupt_index     => WB_D_OUT(118),
             IDEX_ConditionalJMP => EX_OUT(109),
@@ -241,7 +251,7 @@ begin
             IFID_SWP            => WB_D_OUT(162),
             IFID_Imm32_SIGNAL   => WB_D_OUT(163),
             IFID_Rdst           => WB_D_OUT(155 downto 153),
-            IFID_Rsrc           => WB_D_OUT(158 downto 156),
+            IFID_Rsrc1          => WB_D_OUT(158 downto 156),
             MemToReg_IN         => EX_MEM_REG_OUT(0),
             RegWrite_IN         => EX_MEM_REG_OUT(1),
             PCStore_IN          => EX_MEM_REG_OUT(2),
@@ -266,7 +276,8 @@ begin
             ALUResult_OUT       => IF_MEM_OUT(131 downto 100),
             writeAddr_OUT       => IF_MEM_OUT(134 downto 132),
             IFID_FLUSH          => IF_MEM_OUT(135),
-            Fetched_Inst        => IF_MEM_OUT(167 downto 136)
+            Fetched_Inst        => IF_MEM_OUT(167 downto 136),
+            RET_OUT             => IF_MEM_OUT(168)
         );
 
     MEMWBRegister_inst : entity work.MEMWBRegister
@@ -293,7 +304,7 @@ begin
             ID_EX_Rsrc2     => IDEX_REG_OUT(139 downto 137),
             EX_MEM_Rdst     => EX_MEM_REG_OUT(111 downto 109),
             MEM_WB_Rdst     => MEM_WB_REG_OUT(68 downto 66),
-            EX_MEM_RegWrite => EX_MEM_REG_OUT(5),
+            EX_MEM_RegWrite => EX_MEM_REG_OUT(1),
             MEM_WB_RegWrite => MEM_WB_REG_OUT(1),
             ID_EX_Swap      => IDEX_REG_OUT(155),
             ForwardA        => First_Operand_Signal,
@@ -308,4 +319,25 @@ begin
     Second_Operand_Data_Signal <= WB_D_OUT(199 downto 168) when Second_Operand_Signal = "01" else
                                   EX_MEM_REG_OUT(105 downto 74) when Second_Operand_Signal = "10" else
                                   IDEX_REG_OUT(95 downto 64);
+
+    HazardUnit_inst : entity work.HazardUnit
+        port map(
+            IFID_Rsrc1          => WB_D_OUT(158 downto 156),
+            IFID_Rsrc2          => WB_D_OUT(161 downto 159),
+            IFID_JMPCALL        => WB_D_OUT(14),
+            IFID_RET            => WB_D_OUT(8),
+            IFID_HLT            => WB_D_OUT(200),
+            Rsrc1_Used          => Rsrc1_Used,
+            Rsrc2_Used          => Rsrc2_Used,
+            IDEX_Rdst           => IDEX_REG_OUT(133 downto 131),
+            IDEX_MemRead        => IDEX_REG_OUT(144),
+            IDEX_ConditionalJMP => EX_OUT(109),
+            EX_MEM_RET          => IF_MEM_OUT(168),
+            HU_IFID_EN          => HU_OUT(0),
+            HU_IFID_FLUSH       => HU_OUT(1),
+            HU_IDEX_FLUSH       => HU_OUT(2),
+            HU_EXMEM_FLUSH      => HU_OUT(3),
+            HU_PCWrite_OUT      => HU_OUT(4)
+        );
+
 end architecture RTL;

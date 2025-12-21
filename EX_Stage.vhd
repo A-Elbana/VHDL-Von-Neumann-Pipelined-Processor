@@ -6,9 +6,9 @@ entity EX_Stage is
     port(
         --some signal can be done on the cpu module like the pc and M/WB_control
         PC, ReadData1, ReadData2, Imm, INPort : in  std_logic_vector(31 downto 0);
-        func, Rdst, Rsrc1, Rsrc2              : in  std_logic_vector(2 downto 0);
+        func              : in  std_logic_vector(2 downto 0);
         JumpType, AluOP                       : in  std_logic_vector(1 downto 0);
-        Swap, AluSrc, OutOP, InputOp          : in  std_logic;
+        AluSrc, OutOP, InputOp          : in  std_logic;
         M_control                             : in  std_logic_vector(7 downto 0);
         WB_control                            : in  std_logic_vector(1 downto 0);
         clk                                   : in  std_logic;

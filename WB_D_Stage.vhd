@@ -25,7 +25,8 @@ entity WB_D_Stage is
         MemWrite, RET, RTI, InputOp, ALUSrc, OutOp                               : out std_logic;
         SWINT, JMPCALL, HLT, PCWrite, SWP, Imm32_SIGNAL                          : out std_logic;
         IFID_EN, IDEX_EN, EXMEM_EN, MEMWB_EN, SECOND_SWP_OUT                     : out std_logic;
-        StackOpType, ALUOPType, JMPType                                          : out std_logic_vector(1 downto 0)
+        StackOpType, ALUOPType, JMPType                                          : out std_logic_vector(1 downto 0);
+        Rsrc1_Used, Rsrc2_Used                                                   : out std_logic
     );
 end entity WB_D_Stage;
 
@@ -74,7 +75,9 @@ begin
             MEMWB_EN               => MEMWB_EN,
             StackOpType            => StackOpType,
             ALUOPType              => ALUOPType,
-            JMPType                => JMPType
+            JMPType                => JMPType,
+            Rsrc1_Used             => Rsrc1_Used,
+            Rsrc2_Used             => Rsrc2_Used
         );
 
     --Select the data source for the write back from Memory or ALU result   

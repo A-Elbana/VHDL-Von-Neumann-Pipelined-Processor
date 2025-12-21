@@ -17,8 +17,7 @@ begin
 
     Stack_OUT <= 
         std_logic_vector(unsigned(Stack_Q) + to_unsigned(1, 32)) WHEN StackOpType_IN = "11" 
-        ELSE Stack_Q WHEN StackOpType_IN = "10"
-        ELSE (others => '0');
+        ELSE Stack_Q;
     stack_reg : process (clk, rst) is
     begin
         if rst = '1' then
