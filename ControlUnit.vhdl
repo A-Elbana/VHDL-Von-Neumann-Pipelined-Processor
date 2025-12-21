@@ -48,9 +48,9 @@ begin
         or decoded_inst(19) -- LDD
         or decoded_inst(16) -- RET
         or decoded_inst(18) -- RTI
-        or decoded_inst(10) -- LDM
         or decoded_inst(6) -- PUSH
         or decoded_inst(15) -- CALL
+        or decoded_inst(17) -- INT
         or decoded_inst(20); -- STD
 
     MemRead <= decoded_inst(7) -- POP
@@ -60,6 +60,7 @@ begin
 
     MemWrite <= decoded_inst(6) -- PUSH
         or decoded_inst(15) -- CALL
+        or decoded_inst(17) -- INT
         or decoded_inst(20); -- STD
 
     RETURNINST <= decoded_inst(16) -- RET
@@ -141,8 +142,8 @@ begin
         or decoded_inst(9); -- IADD
     Rsrc2_Used <=  decoded_inst(2) -- ALUOP
         or decoded_inst(6) -- PUSH
-        or decoded_inst(20) -- STD
-        or decoded_inst(3); -- OUT
+        or decoded_inst(20); -- STD
+        
     Imm32 <= (Imm and not SECOND_Imm32_SIGNAL_IN);
     MemOp_Priority <= (EXMEM_MemOp and (SECOND_Imm32_SIGNAL_IN xnor Imm)) or HWInt;
     IFID_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) or RETURNINST or decoded_inst(1);

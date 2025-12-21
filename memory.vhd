@@ -79,7 +79,7 @@ ARCHITECTURE memArch OF Memory IS
     return ram_content;
     end function;
 SIGNAL memData : memType := init_ram_hex;
-
+    
 BEGIN
     PROCESS (clk, HWInt) IS
     BEGIN
@@ -93,7 +93,7 @@ BEGIN
     END PROCESS;
 
 
-	readData <= (OTHERS => '0') WHEN (to_integer(unsigned(Address)) > 262143)
+	readData <= (OTHERS => '0') WHEN (unsigned(Address) > to_unsigned(262143, 32))
 	ELSE memData(to_integer(unsigned(Address))) WHEN MemRead = '1'
 	ELSE (OTHERS => '0');
 

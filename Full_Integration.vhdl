@@ -12,31 +12,29 @@ architecture RTL of Full_Integration is
     signal IFID_REG_OUT   : std_logic_vector(97 downto 0);
     signal HWInt          : std_logic                     := '0';
     signal INPort         : std_logic_vector(31 downto 0) := x"ABABABAB";
-    signal OUTPort        : std_logic_vector(31 downto 0);
+    signal OUTPort        : std_logic_vector(31 downto 0) := x"00000000";
     signal WB_D_OUT       : std_logic_vector(200 downto 0);
     signal IDEX_REG_OUT   : std_logic_vector(159 downto 0);
     signal EX_OUT         : std_logic_vector(141 downto 0);
-    signal EX_MEM_REG_OUT : std_logic_vector(111 downto 0);
-    signal IF_MEM_OUT     : std_logic_vector(168 downto 0);
+    signal EX_MEM_REG_OUT : std_logic_vector(112 downto 0);
+    signal IF_MEM_OUT     : std_logic_vector(171 downto 0);
     signal MEM_WB_REG_OUT : std_logic_vector(68 downto 0);
-    signal HU_OUT : std_logic_vector(4 downto 0);
-    
+    signal HU_OUT         : std_logic_vector(4 downto 0);
 
     signal First_Operand_Data_Signal  : std_logic_vector(31 downto 0);
     signal Second_Operand_Data_Signal : std_logic_vector(31 downto 0);
     signal First_Operand_Signal       : std_logic_vector(1 downto 0);
     signal Second_Operand_Signal      : std_logic_vector(1 downto 0);
-    signal PCWrite : std_logic;
-    signal IFIDEN : std_logic;
-    signal IFIDFLUSH : std_logic;
-    
+    signal PCWrite                    : std_logic;
+    signal IFIDEN                     : std_logic;
+    signal IFIDFLUSH                  : std_logic;
 
     ------ HU -------
     signal Rsrc1_Used, Rsrc2_Used : std_logic;
 
 begin
-    PCWrite <= HU_OUT(4) or WB_D_OUT(165);
-    IFIDEN <= HU_OUT(0) or WB_D_OUT(0);
+    PCWrite   <= HU_OUT(4) or WB_D_OUT(165);
+    IFIDEN    <= HU_OUT(0) or WB_D_OUT(0);
     IFIDFLUSH <= HU_OUT(1) or IF_MEM_OUT(135);
     IFIDRegister_inst : entity work.IFIDRegister
         port map(
@@ -188,6 +186,8 @@ begin
             OutOP          => IDEX_REG_OUT(152),
             AluOP          => IDEX_REG_OUT(157 downto 156),
             JumpType       => IDEX_REG_OUT(159 downto 158),
+            MEM_CCR_IN     => IF_MEM_OUT(171 downto 169),
+            MEM_RTI        => IF_MEM_OUT(33),
             M_out_Control  => EX_OUT(7 downto 0),
             WB_out_Control => EX_OUT(9 downto 8),
             PC_Out         => EX_OUT(41 downto 10),
@@ -211,6 +211,7 @@ begin
             MemWrite_IN     => EX_OUT(3),
             RET_IN          => EX_OUT(4),
             RTI_IN          => EX_OUT(5),
+            SWINT_IN        => IDEX_REG_OUT(153),
             StackOpType_IN  => EX_OUT(7 downto 6),
             MemToReg_IN     => EX_OUT(8),
             RegWrite_IN     => EX_OUT(9),
@@ -227,6 +228,7 @@ begin
             MemWrite_OUT    => EX_MEM_REG_OUT(5),
             RET_OUT         => EX_MEM_REG_OUT(6),
             RTI_OUT         => EX_MEM_REG_OUT(7),
+            SWINT_OUT       => EX_MEM_REG_OUT(112),
             StackOpType_OUT => EX_MEM_REG_OUT(9 downto 8),
             PC_OUT          => EX_MEM_REG_OUT(41 downto 10),
             StoreData_OUT   => EX_MEM_REG_OUT(73 downto 42),
@@ -242,16 +244,16 @@ begin
             HWInt               => HWInt,
             MemOp_Priority_IN   => WB_D_OUT(164),
             PCWrite             => PCWrite,
-            SWInt               => WB_D_OUT(13),
-            interrupt_index     => WB_D_OUT(118),
+            IFID_SWInt          => WB_D_OUT(13),
+            interrupt_index     => IFID_REG_OUT(65),
             IDEX_ConditionalJMP => EX_OUT(109),
             IDEX_Imm            => EX_OUT(141 downto 110),
-            IFID_Imm            => WB_D_OUT(149 downto 118),
             IFID_JMPCALL        => WB_D_OUT(14),
             IFID_SWP            => WB_D_OUT(162),
             IFID_Imm32_SIGNAL   => WB_D_OUT(163),
             IFID_Rdst           => WB_D_OUT(155 downto 153),
             IFID_Rsrc1          => WB_D_OUT(158 downto 156),
+            EXMEM_EN            => WB_D_OUT(166),
             MemToReg_IN         => EX_MEM_REG_OUT(0),
             RegWrite_IN         => EX_MEM_REG_OUT(1),
             PCStore_IN          => EX_MEM_REG_OUT(2),
@@ -260,6 +262,7 @@ begin
             MemWrite_IN         => EX_MEM_REG_OUT(5),
             RET_IN              => EX_MEM_REG_OUT(6),
             RTI_IN              => EX_MEM_REG_OUT(7),
+            EXMEM_SWINT         => EX_MEM_REG_OUT(112),
             StackOpType_IN      => EX_MEM_REG_OUT(9 downto 8),
             PC_IN               => EX_MEM_REG_OUT(41 downto 10),
             StoreData_IN        => EX_MEM_REG_OUT(73 downto 42),
@@ -269,6 +272,7 @@ begin
             IF_Imm              => IF_MEM_OUT(31 downto 0),
             EXMEM_MemOp_Inst    => IF_MEM_OUT(32),
             EXMEM_RTI           => IF_MEM_OUT(33),
+            EXMEM_CCR_OUT       => IF_MEM_OUT(171 downto 169),
             MemToReg_OUT        => IF_MEM_OUT(34),
             RegWrite_OUT        => IF_MEM_OUT(35),
             PC_OUT              => IF_MEM_OUT(67 downto 36),

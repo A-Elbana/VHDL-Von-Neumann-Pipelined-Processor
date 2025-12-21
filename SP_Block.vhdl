@@ -6,6 +6,7 @@ entity SP_Block is
     port(
         clk : in std_logic;
         rst : in std_logic;
+        en : in std_logic;
         StackOpType_IN : in std_logic_vector(1 downto 0);
         Stack_OUT : out std_logic_vector(31 downto 0)
     );
@@ -22,14 +23,14 @@ begin
     begin
         if rst = '1' then
             Stack_Q <= (17 downto 0 => '1', others => '0');
-        elsif rising_edge(clk) then
+        elsif rising_edge(clk) and en = '0' then
+            
             if StackOpType_IN(1) = '1' then
-                case StackOpType_IN(0) is
-                    when '1' => 
-                        Stack_Q <= std_logic_vector(unsigned(Stack_Q) + to_unsigned(1, 32));
-                    when others => 
-                        Stack_Q <= std_logic_vector(unsigned(Stack_Q) - to_unsigned(1, 32));
-                end case;
+                if StackOpType_IN(0) = '1' then
+                    Stack_Q <= std_logic_vector(unsigned(Stack_Q) + to_unsigned(1, 32));
+                else
+                    Stack_Q <= std_logic_vector(unsigned(Stack_Q) - to_unsigned(1, 32));
+                end if;
             end if;
         end if;
     end process stack_reg;

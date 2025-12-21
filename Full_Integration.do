@@ -1,19 +1,29 @@
+python Assembler/new_assembler2.py $1 out1.txt
 project compileall
 vsim -gui work.full_integration
 add wave -divider "DEBUG Watch"
 add wave -position insertpoint  \
 sim:/full_integration/clk \
 sim:/full_integration/rst  \
-sim:/full_integration/INPort 
+sim:/full_integration/HWINT \
+sim:/full_integration/INPort \
+sim:/full_integration/OUTPort 
 add wave -position insertpoint -radix decimal sim:/full_integration/IF_MEM_Stage_inst/PC_OUT
 add wave -position insertpoint  \
 sim:/full_integration/WB_D_Stage_inst/MemOp_Priority \
-sim:/full_integration/WB_D_Stage_inst/IFID_EN \
-sim:/full_integration/WB_D_Stage_inst/IDEX_EN \
+sim:/full_integration/IFIDEN \
+sim:/full_integration/IFIDFLUSH \
+sim:/full_integration/IDEXRegister_inst/en \
+sim:/full_integration/HU_OUT(2) \
 sim:/full_integration/WB_D_Stage_inst/EXMEM_EN \
+sim:/full_integration/HU_OUT(3) \
 sim:/full_integration/WB_D_Stage_inst/MEMWB_EN \
-sim:/full_integration/IF_MEM_Stage_inst/JMPADDRESS \
-sim:/full_integration/IF_MEM_Stage_inst/intermediate2 \
+sim:/full_integration/IF_MEM_Stage_inst/LoadToPCFSM_inst/state_reg \
+sim:/full_integration/IF_MEM_Stage_inst/LoadToPCFSM_inst/next_state \
+sim:/full_integration/IF_MEM_Stage_inst/LoadToPCFSM_inst/interrupt_index \
+sim:/full_integration/IF_MEM_Stage_inst/LoadToPCFSM_inst/LoadPC \
+sim:/full_integration/IF_MEM_Stage_inst/LoadToPCFSM_inst/int_index \
+sim:/full_integration/IF_MEM_Stage_inst/LoadToPCFSM_inst/IFID_FLUSH \
 sim:/full_integration/IF_MEM_Stage_inst/PC_REG_IN \
 sim:/full_integration/IF_MEM_Stage_inst/Address_MUX1 \
 sim:/full_integration/IF_MEM_Stage_inst/STACKPOINTER \
@@ -97,14 +107,16 @@ sim:/full_integration/IDEXRegister_inst/Funct_OUT
 add wave -divider "ALU_Outputs"
 add wave -position insertpoint -radix decimal \
 sim:/full_integration/EX_Stage_inst/PC_Out 
-add wave -position insertpoint \
+add wave -position insertpoint  \
+sim:/full_integration/EX_Stage_inst/PC_Out \
 sim:/full_integration/EX_Stage_inst/ALUResult \
 sim:/full_integration/EX_Stage_inst/StoreData \
 sim:/full_integration/EX_Stage_inst/OUTPORT \
 sim:/full_integration/EX_Stage_inst/CCR \
 sim:/full_integration/EX_Stage_inst/M_out_Control \
 sim:/full_integration/EX_Stage_inst/WB_out_Control \
-sim:/full_integration/EX_Stage_inst/ConditionalJMP
+sim:/full_integration/EX_Stage_inst/ConditionalJMP \
+sim:/full_integration/EX_Stage_inst/EX_Imm
 add wave -divider "EXMEM_Reg_Outputs"
 add wave -position insertpoint  \
 sim:/full_integration/EXMEMRegister_inst/MemToReg_OUT \
@@ -115,6 +127,7 @@ sim:/full_integration/EXMEMRegister_inst/MemRead_OUT \
 sim:/full_integration/EXMEMRegister_inst/MemWrite_OUT \
 sim:/full_integration/EXMEMRegister_inst/RET_OUT \
 sim:/full_integration/EXMEMRegister_inst/RTI_OUT \
+sim:/full_integration/EXMEMRegister_inst/SWINT_OUT \
 sim:/full_integration/EXMEMRegister_inst/StackOpType_OUT
 add wave -position insertpoint -radix decimal sim:/full_integration/EXMEMRegister_inst/PC_OUT
 add wave -position insertpoint \
@@ -127,6 +140,7 @@ add wave -position insertpoint  \
 sim:/full_integration/IF_MEM_Stage_inst/IF_Imm \
 sim:/full_integration/IF_MEM_Stage_inst/EXMEM_MemOp_Inst \
 sim:/full_integration/IF_MEM_Stage_inst/EXMEM_RTI \
+sim:/full_integration/IF_MEM_Stage_inst/EXMEM_CCR_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/MemToReg_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/RegWrite_OUT
 add wave -position insertpoint -radix decimal sim:/full_integration/IF_MEM_Stage_inst/PC_OUT
@@ -135,7 +149,8 @@ sim:/full_integration/IF_MEM_Stage_inst/readData_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/ALUResult_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/writeAddr_OUT \
 sim:/full_integration/IF_MEM_Stage_inst/IFID_FLUSH \
-sim:/full_integration/IF_MEM_Stage_inst/Fetched_Inst
+sim:/full_integration/IF_MEM_Stage_inst/Fetched_Inst \
+sim:/full_integration/IF_MEM_Stage_inst/RET_OUT
 add wave -divider "MEM_WB_Reg_Outputs"
 add wave -position insertpoint  \
 sim:/full_integration/MEMWBRegister_inst/MemToReg_OUT \
@@ -148,3 +163,10 @@ force -freeze sim:/full_integration/rst 1 0
 run 50 ps
 force -freeze sim:/full_integration/rst 0 0
 run 50 ps
+run
+run
+run
+run
+force -freeze sim:/full_integration/HWInt 1 0
+run
+force -freeze sim:/full_integration/HWInt 0 0

@@ -10,11 +10,13 @@ entity EXMEMRegister is
         flush                                                                    : in  std_logic;
         MemToReg_IN, RegWrite_IN                                                 : in  std_logic; -- WB Signals
         PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN       : in  std_logic; -- M Signals
+        SWINT_IN : in std_logic;
         StackOpType_IN                                                           : in  std_logic_vector(1 downto 0); -- M Signals
         PC_IN, StoreData_IN, ALUResult_IN                                        : in  std_logic_vector(31 downto 0); -- Data
         CCR_IN, Rdst_IN                                                          : in  std_logic_vector(2 downto 0); -- Data
         MemToReg_OUT, RegWrite_OUT                                               : out std_logic; -- WB Signals
         PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT : out std_logic; -- M Signals
+        SWINT_OUT : out std_logic;
         StackOpType_OUT                                                          : out std_logic_vector(1 downto 0); -- M Signals
         PC_OUT, StoreData_OUT, ALUResult_OUT                                     : out std_logic_vector(31 downto 0); -- Data
         CCR_OUT, Rdst_OUT                                                        : out std_logic_vector(2 downto 0) -- Data
@@ -38,6 +40,7 @@ begin
             MemWrite_OUT    <= '0';
             RET_OUT         <= '0';
             RTI_OUT         <= '0';
+            SWINT_OUT         <= '0';
             StackOpType_OUT <= (others => '0');
 
             -- Data
@@ -59,6 +62,7 @@ begin
                 MemWrite_OUT    <= '0';
                 RET_OUT         <= '0';
                 RTI_OUT         <= '0';
+                SWINT_OUT         <= '0';
                 StackOpType_OUT <= (others => '0');
 
                 PC_OUT        <= (others => '0');
@@ -78,6 +82,7 @@ begin
                 MemWrite_OUT    <= MemWrite_IN;
                 RET_OUT         <= RET_IN;
                 RTI_OUT         <= RTI_IN;
+                SWINT_OUT         <= SWINT_IN;
                 StackOpType_OUT <= StackOpType_IN;
 
                 PC_OUT        <= PC_IN;
