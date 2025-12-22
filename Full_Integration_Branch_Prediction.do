@@ -170,18 +170,4 @@ force -freeze sim:/full_integration_branch_prediction/rst 1 0
 run 50 ps
 force -freeze sim:/full_integration_branch_prediction/rst 0 0
 run 50 ps
-run 100 ps
-force -freeze sim:/full_integration_branch_prediction/INPort 30 0
-run 100 ps
-force -freeze sim:/full_integration_branch_prediction/INPort 50 0
-run 100 ps
-force -freeze sim:/full_integration_branch_prediction/INPort 100 0
-run 100 ps
-force -freeze sim:/full_integration_branch_prediction/INPort 300 0
-run 100 ps
-force -freeze sim:/full_integration_branch_prediction/INPort FFFF 0
-run 100 ps
-force -freeze sim:/full_integration_branch_prediction/INPort FFFF 0
-run 100 ps
-force -freeze sim:/full_integration_branch_prediction/INPort 400 0
-run 100 ps
+

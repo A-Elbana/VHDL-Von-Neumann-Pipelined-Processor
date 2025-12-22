@@ -10,6 +10,7 @@ entity EXMEMRegister is
         flush                                                                    : in  std_logic;
         MemToReg_IN, RegWrite_IN                                                 : in  std_logic; -- WB Signals
         PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN       : in  std_logic; -- M Signals
+        HWInt_IN : in std_logic;
         SWINT_IN : in std_logic;
         StackOpType_IN                                                           : in  std_logic_vector(1 downto 0); -- M Signals
         PC_IN, StoreData_IN, ALUResult_IN                                        : in  std_logic_vector(31 downto 0); -- Data
@@ -17,6 +18,7 @@ entity EXMEMRegister is
         MemToReg_OUT, RegWrite_OUT                                               : out std_logic; -- WB Signals
         PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT : out std_logic; -- M Signals
         SWINT_OUT : out std_logic;
+        HWINT_OUT : out std_logic;
         StackOpType_OUT                                                          : out std_logic_vector(1 downto 0); -- M Signals
         PC_OUT, StoreData_OUT, ALUResult_OUT                                     : out std_logic_vector(31 downto 0); -- Data
         CCR_OUT, Rdst_OUT                                                        : out std_logic_vector(2 downto 0) -- Data

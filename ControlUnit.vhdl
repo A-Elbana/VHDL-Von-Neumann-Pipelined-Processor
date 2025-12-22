@@ -146,6 +146,12 @@ begin
         
     Imm32 <= (Imm and not SECOND_Imm32_SIGNAL_IN);
     MemOp_Priority <= (EXMEM_MemOp and (SECOND_Imm32_SIGNAL_IN xnor Imm)) or HWInt;
+    -- I have this idea where we first take this HWINT from the MEM STAGE and use it to
+    -- MEMOppriority and stall the pipeline except IFID_EN since it already has at
+    -- least one bubble caused by loadToPC
+    -- so we effectively add and remove one bubble at least
+    -- Read this until I come back
+    -- I might be late ~6:30
     IFID_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) or RETURNINST or decoded_inst(1);
     IDEX_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP;
     EXMEM_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP;

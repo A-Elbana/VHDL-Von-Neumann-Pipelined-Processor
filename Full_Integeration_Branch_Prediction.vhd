@@ -14,9 +14,9 @@ architecture RTL of Full_Integration_Branch_Prediction is
     signal INPort         : std_logic_vector(31 downto 0) := x"ABABABAB";
     signal OUTPort        : std_logic_vector(31 downto 0) := x"00000000";
     signal WB_D_OUT       : std_logic_vector(200 downto 0);
-    signal IDEX_REG_OUT   : std_logic_vector(159 downto 0);
+    signal IDEX_REG_OUT   : std_logic_vector(160 downto 0);
     signal EX_OUT         : std_logic_vector(141 downto 0);
-    signal EX_MEM_REG_OUT : std_logic_vector(112 downto 0);
+    signal EX_MEM_REG_OUT : std_logic_vector(113 downto 0);
     signal IF_MEM_OUT     : std_logic_vector(171 downto 0);
     signal MEM_WB_REG_OUT : std_logic_vector(68 downto 0);
     signal HU_OUT         : std_logic_vector(4 downto 0);
@@ -136,6 +136,7 @@ begin
             ALUSrc_IN       => WB_D_OUT(11),
             OutOp_IN        => WB_D_OUT(12),
             SWINT_IN        => WB_D_OUT(13),
+            HWINT_IN        => HWInt,
             JMPCALL_IN      => WB_D_OUT(14),
             SECOND_SWP_IN   => WB_D_OUT(15),
             ALUOPType_IN    => WB_D_OUT(17 downto 16),
@@ -164,6 +165,7 @@ begin
             SECOND_SWP_OUT  => IDEX_REG_OUT(155), -- EX
             ALUOPType_OUT   => IDEX_REG_OUT(157 downto 156), -- EX
             JMPType_OUT     => IDEX_REG_OUT(159 downto 158), -- EX
+            HWInt_OUT       => IDEX_REG_OUT(160), -- EX
             JMPCALL_OUT     => IDEX_REG_OUT(154), -- EX
             SWINT_OUT       => IDEX_REG_OUT(153), -- EX
             PC_OUT          => IDEX_REG_OUT(31 downto 0),
@@ -219,6 +221,7 @@ begin
             RET_IN          => EX_OUT(4),
             RTI_IN          => EX_OUT(5),
             SWINT_IN        => IDEX_REG_OUT(153),
+            HWINT_IN        => IDEX_REG_OUT(160),
             StackOpType_IN  => EX_OUT(7 downto 6),
             MemToReg_IN     => EX_OUT(8),
             RegWrite_IN     => EX_OUT(9),
@@ -236,6 +239,7 @@ begin
             RET_OUT         => EX_MEM_REG_OUT(6),
             RTI_OUT         => EX_MEM_REG_OUT(7),
             SWINT_OUT       => EX_MEM_REG_OUT(112),
+            HWINT_OUT       => EX_MEM_REG_OUT(113),
             StackOpType_OUT => EX_MEM_REG_OUT(9 downto 8),
             PC_OUT          => EX_MEM_REG_OUT(41 downto 10),
             StoreData_OUT   => EX_MEM_REG_OUT(73 downto 42),
@@ -248,7 +252,7 @@ begin
         port map(
             clk                 => clk,
             rst                 => rst,
-            HWInt               => HWInt,
+            HWInt               => EX_MEM_REG_OUT(113),
             MemOp_Priority_IN   => WB_D_OUT(164),
             PCWrite             => PCWrite,
             IFID_SWInt          => WB_D_OUT(13),
