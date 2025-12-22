@@ -19,7 +19,7 @@ JMP 20    #Jump to 20
 SUB R7, R2, R0  //R2 - R0
 JZ 50 #jump to 50 if R0=R2
 ADD R4,R4,R4 #R4 = R4*2
-OUT R4    #4, 8, 10, 20, 40, 80, 100, 200, 400
+OUT R4    # 4, 8, 10, 20, 40, 80, 100, 200, 400, (WARN: 800)
 INC R0
 JMP 20 #jump to 20
 
@@ -33,9 +33,9 @@ JMP 60 #jump to 60
 
 .ORG 60
 ADD R4,R4,R4 #R4 = R4*2
-OUT R4  #6, C, 18, 30, 60, C0, 180, 300
+OUT R4  # 6, C, 18, 30, 60, C0, 180, 300
 INC R0
 AND R5,R2,R0 #when R0 < R2(8) answer will be zero
 JZ 60 #jump if R0 < R2 to 60
 INC R4
-OUT R4  #181
+OUT R4  # 181 (WARN: 301)

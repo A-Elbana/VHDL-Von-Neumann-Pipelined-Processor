@@ -42,26 +42,26 @@ INC R7	  # this statement shouldn't be executed,
  
 .ORG 30
 AND R5,R1,R5   #R5=0 , Z = 1
-INT0
+INT 0
 JZ  50      #Jump taken, Z = 0
 INC R7      #this statement shouldn't be executed
 
-#check on flag updated on jump
+# check on flag updated on jump
 .ORG 50
 JZ 100      #Jump Not taken
 
-#check destination forwarding
+# check destination forwarding
 NOT R5     #R5=FFFFFFFF, Z = 0,
 INC R5     #R5=0, Z=1, C=1
 IN  R6     #R6=400, flag no change
 JZ  400     #jump taken, Z = 0
 INC R1     #shouldn't be executed
 
-#check on load use
+# check on load use
 .ORG 400
 POP R6     #R6=300, SP=3FFFF
 Call 300    #SP=3FFFE, M[3FFFF] = PC + 1
-INT1
+INT 1
 INC R6	  #R6=401, this statement shouldn't be executed till call returns, C--> 0, N-->0,Z-->0
 NOP
 NOP
