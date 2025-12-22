@@ -7,6 +7,7 @@ entity IF_MEM_Stage is
         clk                                                                : in  std_logic;
         rst                                                                : in  std_logic;
         HWInt                                                              : in  std_logic;
+        HWInt_IN                                                              : in  std_logic;
         MemOp_Priority_IN                                                  : in  std_logic;
         PCWrite, IFID_SWInt                                                : in  std_logic; -- IF/ID
         interrupt_index                                                    : in  std_logic; -- IF/ID
@@ -110,7 +111,7 @@ begin
             PC_Out  => PC_REG_OUT
         );
 
-    StackOpType_HWINT_IN <= "10" when HWInt = '1' else StackOpType_IN;
+    StackOpType_HWINT_IN <= "10" when HWInt_IN = '1' else StackOpType_IN;
     SP_Block_inst : entity work.SP_Block
         port map(
             clk            => clk,
@@ -120,20 +121,20 @@ begin
             Stack_OUT      => STACKPOINTER
         );
 
-    MemWrite                  <= (HWInt OR MemWrite_IN) WHEN MemOp_Priority_IN = '1' ELSE '0';
-    MemRead                   <= ((not HWInt) AND MemRead_IN) WHEN MemOp_Priority_IN = '1' ELSE '1';
-    Address_MUX1              <= STACKPOINTER when (HWInt or StackOpType_IN(1)) = '1' else ALUResult_IN;
+    MemWrite                  <= (HWInt_IN OR MemWrite_IN) WHEN MemOp_Priority_IN = '1' ELSE '0';
+    MemRead                   <= ((not HWInt_IN) AND MemRead_IN) WHEN MemOp_Priority_IN = '1' ELSE '1';
+    Address_MUX1              <= STACKPOINTER when (HWInt_IN or StackOpType_IN(1)) = '1' else ALUResult_IN;
     EXMEM_CCR_OUT <= readData(31 downto 29);
     Address_MUX2_Intermediate <= Address_MUX1 when MemOp_Priority_IN = '1' else "000" & PC_REG_OUT(28 downto 0);
 
     Address_MUX2              <= (31 downto 2 => '0') & INTINDEX when LoadPC = '1' else Address_MUX2_Intermediate;
-    Address_MUX3              <= Address_MUX2 when (StackOpType_IN(1) or HWInt) = '1' else
+    Address_MUX3              <= Address_MUX2 when (StackOpType_IN(1) or HWInt_IN) = '1' else
                                  (31 downto 16 => '0') & Address_MUX2(15 downto 0) when MemOp_Priority_IN = '1' else
                                  Address_MUX2;
     Address                   <= (31 downto 0 => '0') WHEN rst = '1' ELSE Address_MUX3;
     PC_TO_BE_STORED_AND_FLAGS <= CCR_IN & PC_IN_ADD(28 downto 0);
     writeData_MUX             <= PC_TO_BE_STORED_AND_FLAGS when PCStore_IN = '1' else StoreData_IN;
-    writeData                 <= CCR_IN & PC_REG_OUT(28 downto 0) when HWInt = '1' else writeData_MUX;
+    writeData                 <= CCR_IN & PC_IN(28 downto 0) when HWInt_IN = '1' else writeData_MUX;
     Memory_inst : entity work.Memory
         port map(
             clk       => clk,

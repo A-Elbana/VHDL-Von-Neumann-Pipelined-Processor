@@ -92,7 +92,7 @@ begin
     SWP <= decoded_inst(31); -- SWAP
 
     PCWrite <= decoded_inst(31) -- SWAP
-    or ((EXMEM_MemOp and (SECOND_Imm32_SIGNAL_IN xnor Imm)) and not RETURNINST);
+    or ((EXMEM_MemOp and (SECOND_Imm32_SIGNAL_IN xnor Imm)) and not RETURNINST) or HWInt;
     -- This is the Stack Operation Discriminator bit
     StackOpType(0) <= decoded_inst(7) -- POP
     or RETURNINST; -- Return Instructions
@@ -146,14 +146,8 @@ begin
         
     Imm32 <= (Imm and not SECOND_Imm32_SIGNAL_IN);
     MemOp_Priority <= (EXMEM_MemOp and (SECOND_Imm32_SIGNAL_IN xnor Imm)) or HWInt;
-    -- I have this idea where we first take this HWINT from the MEM STAGE and use it to
-    -- MEMOppriority and stall the pipeline except IFID_EN since it already has at
-    -- least one bubble caused by loadToPC
-    -- so we effectively add and remove one bubble at least
-    -- Read this until I come back
-    -- I might be late ~6:30
     IFID_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) or RETURNINST or decoded_inst(1);
-    IDEX_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP;
-    EXMEM_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP;
-    MEMWB_EN <= (Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP;
+    IDEX_EN <= ((Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP ) or (HWInt and EXMEM_MemOp);
+    EXMEM_EN <= ((Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP) or (HWInt and EXMEM_MemOp);
+    MEMWB_EN <= ((Imm and not SECOND_Imm32_SIGNAL_IN) and not UnconditionalJMP) or (HWInt and EXMEM_MemOp);
 end architecture RTL;

@@ -157,6 +157,7 @@ sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/ALUResult_OUT \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/writeAddr_OUT \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/IFID_FLUSH \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/Fetched_Inst \
+sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/HWINT_IN \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/RET_OUT
 add wave -divider "MEM_WB_Reg_Outputs"
 add wave -position insertpoint  \

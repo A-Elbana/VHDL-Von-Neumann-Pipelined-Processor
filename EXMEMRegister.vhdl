@@ -43,6 +43,7 @@ begin
             RET_OUT         <= '0';
             RTI_OUT         <= '0';
             SWINT_OUT         <= '0';
+            HWINT_OUT         <= '0';
             StackOpType_OUT <= (others => '0');
 
             -- Data
@@ -65,6 +66,7 @@ begin
                 RET_OUT         <= '0';
                 RTI_OUT         <= '0';
                 SWINT_OUT         <= '0';
+                HWINT_OUT         <= '0';
                 StackOpType_OUT <= (others => '0');
 
                 PC_OUT        <= (others => '0');
@@ -85,6 +87,7 @@ begin
                 RET_OUT         <= RET_IN;
                 RTI_OUT         <= RTI_IN;
                 SWINT_OUT         <= SWINT_IN;
+                HWINT_OUT         <= HWINT_IN;
                 StackOpType_OUT <= StackOpType_IN;
 
                 PC_OUT        <= PC_IN;

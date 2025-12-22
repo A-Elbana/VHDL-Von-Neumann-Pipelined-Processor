@@ -10,7 +10,7 @@ entity IDEXRegister is
         flush                                                                      : in  std_logic;
         MemToReg_IN, RegWrite_IN                                                   : in  std_logic; -- WB Signals
         PCStore_IN, MemOp_Inst_IN, MemRead_IN, MemWrite_IN, RET_IN, RTI_IN         : in  std_logic; -- M Signals
-        HWINT_IN : in std_logic;
+        HWINT_IN                                                                   : in  std_logic;
         ALUSrc_IN, OutOp_IN, SWINT_IN, JMPCALL_IN, SECOND_SWP_IN, InputOp_IN       : in  std_logic; -- EX Signals
         ALUOPType_IN, JMPType_IN                                                   : in  std_logic_vector(1 downto 0); -- EX Signals
         StackOpType_IN                                                             : in  std_logic_vector(1 downto 0); -- M Signals
@@ -18,7 +18,7 @@ entity IDEXRegister is
         Rsrc1_IN, Rsrc2_IN, Rdst_IN, Funct_IN                                      : in  std_logic_vector(2 downto 0); -- Data
         MemToReg_OUT, RegWrite_OUT                                                 : out std_logic; -- WB Signals
         PCStore_OUT, MemOp_Inst_OUT, MemRead_OUT, MemWrite_OUT, RET_OUT, RTI_OUT   : out std_logic; -- M Signals
-        HWINT_OUT : OUT std_logic;
+        HWINT_OUT                                                                  : OUT std_logic;
         ALUSrc_OUT, OutOp_OUT, SWINT_OUT, JMPCALL_OUT, SECOND_SWP_OUT, InputOp_OUT : out std_logic; -- EX Signals
         ALUOPType_OUT, JMPType_OUT                                                 : out std_logic_vector(1 downto 0); -- EX Signals
         StackOpType_OUT                                                            : out std_logic_vector(1 downto 0); -- M Signals
@@ -45,6 +45,7 @@ begin
             RET_OUT         <= '0';
             RTI_OUT         <= '0';
             InputOp_OUT     <= '0';
+            HWINT_OUT       <= '0';
             StackOpType_OUT <= (others => '0');
 
             -- EX Signals
@@ -79,6 +80,7 @@ begin
                 RET_OUT         <= '0';
                 RTI_OUT         <= '0';
                 InputOp_OUT     <= '0';
+                HWINT_OUT       <= '0';
                 StackOpType_OUT <= (others => '0');
 
                 ALUSrc_OUT     <= '0';
@@ -110,6 +112,7 @@ begin
                 RET_OUT         <= RET_IN;
                 RTI_OUT         <= RTI_IN;
                 InputOp_OUT     <= InputOp_IN;
+                HWINT_OUT       <= HWINT_IN;
                 StackOpType_OUT <= StackOpType_IN;
 
                 ALUSrc_OUT     <= ALUSrc_IN;

@@ -9,7 +9,7 @@ entity Full_Integration_Branch_Prediction is
 end entity Full_Integration_Branch_Prediction;
 
 architecture RTL of Full_Integration_Branch_Prediction is
-    signal IFID_REG_OUT   : std_logic_vector(97 downto 0);
+    signal IFID_REG_OUT   : std_logic_vector(98 downto 0);
     signal HWInt          : std_logic                     := '0';
     signal INPort         : std_logic_vector(31 downto 0) := x"ABABABAB";
     signal OUTPort        : std_logic_vector(31 downto 0) := x"00000000";
@@ -36,8 +36,7 @@ architecture RTL of Full_Integration_Branch_Prediction is
     signal IDEX_ConditionalJumpOperation : std_logic;
     signal BP_OUT                        : std_logic_vector(33 downto 0);
     signal ConditionalJMP_BP             : std_logic;
-    signal BPRES : std_logic_vector(31 downto 0);
-    
+    signal BPRES                         : std_logic_vector(31 downto 0);
 
 begin
     PCWrite   <= HU_OUT(4) or WB_D_OUT(165);
@@ -50,6 +49,7 @@ begin
             en                      => IFIDEN,
             flush                   => IFIDFLUSH,
             SWP_IN                  => WB_D_OUT(162),
+            HWInt_IN                => HWInt,
             SECOND_Imm32_SIGNAL_IN  => WB_D_OUT(163),
             Imm32_SIGNAL            => WB_D_OUT(163),
             Immediate_IN            => IF_MEM_OUT(31 downto 0),
@@ -59,7 +59,8 @@ begin
             Immediate_OUT           => IFID_REG_OUT(32 downto 1),
             PC_OUT                  => IFID_REG_OUT(64 downto 33),
             Instruction_OUT         => IFID_REG_OUT(96 downto 65),
-            SECOND_Imm32_SIGNAL_OUT => IFID_REG_OUT(97)
+            SECOND_Imm32_SIGNAL_OUT => IFID_REG_OUT(97),
+            HWInt_OUT               => IFID_REG_OUT(98)
         );
 
     WB_D_Stage_inst : entity work.WB_D_Stage
@@ -76,7 +77,7 @@ begin
             rst                    => rst,
             MemToReg               => MEM_WB_REG_OUT(0),
             MEMWBRegWrite_IN       => MEM_WB_REG_OUT(1),
-            HWInt                  => HWInt,
+            HWInt                  => EX_MEM_REG_OUT(113),
             EXMEM_MemOp            => IF_MEM_OUT(32),
             MEMWBRegWrite_OUT      => open,
             PC_Out                 => WB_D_OUT(53 downto 22),
@@ -136,7 +137,7 @@ begin
             ALUSrc_IN       => WB_D_OUT(11),
             OutOp_IN        => WB_D_OUT(12),
             SWINT_IN        => WB_D_OUT(13),
-            HWINT_IN        => HWInt,
+            HWINT_IN        => IFID_REG_OUT(98),
             JMPCALL_IN      => WB_D_OUT(14),
             SECOND_SWP_IN   => WB_D_OUT(15),
             ALUOPType_IN    => WB_D_OUT(17 downto 16),
@@ -252,7 +253,8 @@ begin
         port map(
             clk                 => clk,
             rst                 => rst,
-            HWInt               => EX_MEM_REG_OUT(113),
+            HWInt               => HWINT,
+            HWInt_IN            => EX_MEM_REG_OUT(113),
             MemOp_Priority_IN   => WB_D_OUT(164),
             PCWrite             => PCWrite,
             IFID_SWInt          => WB_D_OUT(13),
@@ -366,9 +368,8 @@ begin
 
     IFID_ConditionalJumpOperation <= '0' when WB_D_OUT(19 downto 18) = "00" else '1';
     IDEX_ConditionalJumpOperation <= '0' when IDEX_REG_OUT(159 downto 158) = "00" else '1';
-    ConditionalJMP_BP             <= (BP_OUT(0) and IFID_ConditionalJumpOperation and not IFID_REG_OUT(97)) 
-        or ((BP_OUT(0) xor EX_OUT(109)) and IDEX_ConditionalJumpOperation);
-    BPRES <= BP_OUT(33 downto 2);
+    ConditionalJMP_BP             <= (BP_OUT(0) and IFID_ConditionalJumpOperation and not IFID_REG_OUT(97)) or ((BP_OUT(0) xor EX_OUT(109)) and IDEX_ConditionalJumpOperation);
+    BPRES                         <= BP_OUT(33 downto 2);
     Two_Bit_Predictor_inst : entity work.Two_Bit_Predictor
         port map(
             clk                           => clk,
@@ -377,7 +378,7 @@ begin
             IDEX_ConditionalJumpOperation => IDEX_ConditionalJumpOperation,
             IDEX_ConditionalJMP           => EX_OUT(109),
             IDEX_PC                       => IDEX_REG_OUT(31 downto 0),
-            IF_IMM                      => IF_MEM_OUT(31 downto 0),
+            IF_IMM                        => IF_MEM_OUT(31 downto 0),
             IDEX_IMM                      => IDEX_REG_OUT(127 downto 96),
             prediction                    => BP_OUT(0),
             Jump_Address_Selector         => BP_OUT(1),
