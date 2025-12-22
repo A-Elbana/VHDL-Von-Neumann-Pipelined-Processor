@@ -17,7 +17,7 @@ entity IF_MEM_Stage is
         StackOpType_IN                                                     : in  std_logic_vector(1 downto 0); -- M Signals
         MemToReg_IN, RegWrite_IN                                           : in  std_logic;
         PC_IN, StoreData_IN, ALUResult_IN                                  : in  std_logic_vector(31 downto 0); -- Data
-        CCR_IN, Rdst_IN                                                    : in  std_logic_vector(2 downto 0); -- Data
+        CCR_IN, Rdst_IN, CCRHWInt_IN                                                    : in  std_logic_vector(2 downto 0); -- Data
         IDEX_Imm                                                           : in  std_logic_vector(31 downto 0);
         IDEX_ConditionalJMP                                                : in  std_logic;
         IFID_JMPCALL                                                       : in  std_logic;
@@ -134,7 +134,7 @@ begin
     Address                   <= (31 downto 0 => '0') WHEN rst = '1' ELSE Address_MUX3;
     PC_TO_BE_STORED_AND_FLAGS <= CCR_IN & PC_IN_ADD(28 downto 0);
     writeData_MUX             <= PC_TO_BE_STORED_AND_FLAGS when PCStore_IN = '1' else StoreData_IN;
-    writeData                 <= CCR_IN & PC_IN(28 downto 0) when HWInt_IN = '1' else writeData_MUX;
+    writeData                 <= CCRHWInt_IN & std_logic_vector(unsigned(PC_IN(28 downto 0)) + 1) when HWInt_IN = '1' else writeData_MUX;
     Memory_inst : entity work.Memory
         port map(
             clk       => clk,

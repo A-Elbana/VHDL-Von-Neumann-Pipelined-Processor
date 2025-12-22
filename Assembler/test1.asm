@@ -16,7 +16,7 @@ HLT
 
 
 .ORG 400 # HWINT
-NOT R7
+AND R0 ,R0, R0
 RTI
 
 .ORG 800      # INT 0

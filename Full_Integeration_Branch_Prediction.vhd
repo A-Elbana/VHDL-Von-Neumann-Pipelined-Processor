@@ -49,7 +49,6 @@ begin
             en                      => IFIDEN,
             flush                   => IFIDFLUSH,
             SWP_IN                  => WB_D_OUT(162),
-            HWInt_IN                => HWInt,
             SECOND_Imm32_SIGNAL_IN  => WB_D_OUT(163),
             Imm32_SIGNAL            => WB_D_OUT(163),
             Immediate_IN            => IF_MEM_OUT(31 downto 0),
@@ -59,8 +58,7 @@ begin
             Immediate_OUT           => IFID_REG_OUT(32 downto 1),
             PC_OUT                  => IFID_REG_OUT(64 downto 33),
             Instruction_OUT         => IFID_REG_OUT(96 downto 65),
-            SECOND_Imm32_SIGNAL_OUT => IFID_REG_OUT(97),
-            HWInt_OUT               => IFID_REG_OUT(98)
+            SECOND_Imm32_SIGNAL_OUT => IFID_REG_OUT(97)
         );
 
     WB_D_Stage_inst : entity work.WB_D_Stage
@@ -137,7 +135,7 @@ begin
             ALUSrc_IN       => WB_D_OUT(11),
             OutOp_IN        => WB_D_OUT(12),
             SWINT_IN        => WB_D_OUT(13),
-            HWINT_IN        => IFID_REG_OUT(98),
+            HWINT_IN        => HWInt,
             JMPCALL_IN      => WB_D_OUT(14),
             SECOND_SWP_IN   => WB_D_OUT(15),
             ALUOPType_IN    => WB_D_OUT(17 downto 16),
@@ -283,6 +281,7 @@ begin
             StoreData_IN        => EX_MEM_REG_OUT(73 downto 42),
             ALUResult_IN        => EX_MEM_REG_OUT(105 downto 74),
             CCR_IN              => EX_MEM_REG_OUT(108 downto 106),
+            CCRHWInt_IN              => EX_OUT(108 downto 106),
             Rdst_IN             => EX_MEM_REG_OUT(111 downto 109),
             IF_Imm              => IF_MEM_OUT(31 downto 0),
             EXMEM_MemOp_Inst    => IF_MEM_OUT(32),

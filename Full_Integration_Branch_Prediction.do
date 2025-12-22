@@ -171,4 +171,8 @@ force -freeze sim:/full_integration_branch_prediction/rst 1 0
 run 50 ps
 force -freeze sim:/full_integration_branch_prediction/rst 0 0
 run 50 ps
-
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/HWInt 1 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/HWInt 0 0
+run 100 ps
