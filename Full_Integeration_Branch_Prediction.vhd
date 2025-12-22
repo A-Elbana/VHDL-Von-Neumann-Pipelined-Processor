@@ -376,7 +376,7 @@ begin
             IFID_ConditionalJumpOperation => IFID_ConditionalJumpOperation,
             IDEX_ConditionalJumpOperation => IDEX_ConditionalJumpOperation,
             IDEX_ConditionalJMP           => EX_OUT(109),
-            IDEX_PC                       => IDEX_REG_OUT(31 downto 0),
+            PC                       => IFID_REG_OUT(64 downto 33),
             IF_IMM                        => IF_MEM_OUT(31 downto 0),
             IDEX_IMM                      => IDEX_REG_OUT(127 downto 96),
             prediction                    => BP_OUT(0),

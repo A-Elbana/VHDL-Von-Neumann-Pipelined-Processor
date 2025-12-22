@@ -17,16 +17,11 @@ sim:/full_integration_branch_prediction/HU_OUT(2) \
 sim:/full_integration_branch_prediction/WB_D_Stage_inst/EXMEM_EN \
 sim:/full_integration_branch_prediction/HU_OUT(3) \
 sim:/full_integration_branch_prediction/WB_D_Stage_inst/MEMWB_EN \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/state_reg \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/next_state \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/interrupt_index \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/LoadPC \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/int_index \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/IFID_FLUSH \
 sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/prediction \
 sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/Jump_Address_Selector \
 sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/Prediction_Result \
-sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/Current_State
+sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/Current_State \
+sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/PC_Back
 add wave -position insertpoint -radix hexadecimal sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/PC_OUT
 add wave -position insertpoint  \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/PC_REG_IN \
@@ -36,6 +31,10 @@ sim:/full_integration_branch_prediction/BPRES \
 sim:/full_integration_branch_prediction/PCWrite \
 sim:/full_integration_branch_prediction/ConditionalJMP_BP \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/Address \
+sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/Memory_inst/MemRead \
+sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/Memory_inst/readData \
+sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/STACKPOINTER \
+sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/SP_Block_inst/STACK_Q \
 sim:/full_integration_branch_prediction/WB_D_Stage_inst/regfile_inst/RegFile \
 sim:/full_integration_branch_prediction/EX_Stage_inst/CCR 
 add wave -divider "IFID_Reg_Outputs"
@@ -172,7 +171,9 @@ run 50 ps
 force -freeze sim:/full_integration_branch_prediction/rst 0 0
 run 50 ps
 run 100 ps
-force -freeze sim:/full_integration_branch_prediction/HWInt 1 0
+force -freeze sim:/full_integration_branch_prediction/INPort 30 0
 run 100 ps
-force -freeze sim:/full_integration_branch_prediction/HWInt 0 0
+force -freeze sim:/full_integration_branch_prediction/INPort 50 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort 2 0
 run 100 ps

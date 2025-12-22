@@ -7,7 +7,7 @@ entity Two_Bit_Predictor is
         IFID_ConditionalJumpOperation, IDEX_ConditionalJumpOperation : in  std_logic;
         IDEX_ConditionalJMP                                          : in  std_logic;
         --IFID_IMM is not extended yet
-        IDEX_PC, IF_IMM, IDEX_IMM                                  : in  std_logic_vector(31 downto 0);
+        PC, IF_IMM, IDEX_IMM                                  : in  std_logic_vector(31 downto 0);
         clk                                                          : in  std_logic;
         rst                                                          : in  std_logic;
         --taken 1, untaken 0
@@ -21,6 +21,7 @@ architecture Two_Bit_Predictor_Arch of Two_Bit_Predictor is
     type   Prediction_State  is (STRONG_TAKEN, STRONG_UNTAKEN, WEAK_TAKEN, WEAK_UNTAKEN);
     signal Current_State     : Prediction_State := STRONG_UNTAKEN;
     signal prediction_signal : std_logic;
+    signal PC_BACK : std_logic_vector(31 downto 0);
 
 begin
     lbl : process(clk, rst) is
@@ -29,7 +30,9 @@ begin
             Current_State <= STRONG_TAKEN;
 
         elsif rising_edge(clk) then
-
+            if Current_State = STRONG_TAKEN or Current_State = WEAK_TAKEN then
+                PC_BACK <= PC;
+            end if;
             if IDEX_ConditionalJumpOperation = '1' then
                 if Current_State = STRONG_TAKEN then
                     if IDEX_ConditionalJMP = '0' then
@@ -51,7 +54,7 @@ begin
 
     end process;
 
-    Prediction_Result <= std_logic_vector(unsigned(IDEX_PC) + 2) when prediction_signal = '1' and IDEX_ConditionalJMP = '0' and IDEX_ConditionalJumpOperation = '1' else
+    Prediction_Result <= std_logic_vector(unsigned(PC_BACK) + 2) when prediction_signal = '1' and IDEX_ConditionalJMP = '0' and IDEX_ConditionalJumpOperation = '1' else
                          IF_IMM when prediction_signal = '1' and IFID_ConditionalJumpOperation = '1' else
                          IDEX_IMM when prediction_signal = '0' and IDEX_ConditionalJMP = '1' and IDEX_ConditionalJumpOperation = '1' else (others => '0');
 
