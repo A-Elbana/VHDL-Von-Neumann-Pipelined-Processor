@@ -22,6 +22,8 @@ entity IF_MEM_Stage is
         IFID_JMPCALL                                                       : in  std_logic;
         IFID_SWP                                                           : in  std_logic;
         IFID_Imm32_SIGNAL                                                  : in  std_logic;
+        BP_Selector : in std_logic;
+        BP_Address : in std_logic_vector(31 downto 0);
         IFID_Rsrc1                                                         : in  std_logic_vector(2 downto 0);
         IFID_Rdst                                                          : in  std_logic_vector(2 downto 0);
         IF_Imm                                                             : out std_logic_vector(31 downto 0);
@@ -95,7 +97,7 @@ begin
             IFID_FLUSH      => IFID_FLUSH
         );
     PC_OUT              <= "000" & PC_REG_OUT(28 downto 0);
-    JMPADDRESS          <= IDEX_Imm when IDEX_ConditionalJMP = '1' else readData;
+    JMPADDRESS          <= BP_Address when IDEX_ConditionalJMP = '1' else readData;
     intermediate2       <= JMPADDRESS when (IFID_JMPCALL or IDEX_ConditionalJMP) = '1' else std_logic_vector(unsigned(PC_REG_OUT) + to_unsigned(1, 32));
     intermediate        <= readData when (RET_IN or LoadPC) = '1' else intermediate2;
     PC_REG_IN           <= readData when rst = '1' else intermediate;

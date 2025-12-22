@@ -7,8 +7,7 @@ sim:/full_integration_branch_prediction/clk \
 sim:/full_integration_branch_prediction/rst  \
 sim:/full_integration_branch_prediction/HWINT \
 sim:/full_integration_branch_prediction/INPort \
-sim:/full_integration_branch_prediction/OUTPort 
-add wave -position insertpoint -radix hexadecimal sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/PC_OUT
+sim:/full_integration_branch_prediction/OUTPort
 add wave -position insertpoint  \
 sim:/full_integration_branch_prediction/WB_D_Stage_inst/MemOp_Priority \
 sim:/full_integration_branch_prediction/IFIDEN \
@@ -24,10 +23,18 @@ sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/inter
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/LoadPC \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/int_index \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/LoadToPCFSM_inst/IFID_FLUSH \
+sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/prediction \
+sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/Jump_Address_Selector \
+sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/Prediction_Result \
+sim:/full_integration_branch_prediction/Two_Bit_Predictor_inst/Current_State
+add wave -position insertpoint -radix hexadecimal sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/PC_OUT
+add wave -position insertpoint  \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/PC_REG_IN \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/Address_MUX1 \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/STACKPOINTER \
-sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/writeData \
+sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/intermediate2 \
+sim:/full_integration_branch_prediction/BP_OUT(1) \
+sim:/full_integration_branch_prediction/BPRES \
+sim:/full_integration_branch_prediction/PCWrite \
+sim:/full_integration_branch_prediction/ConditionalJMP_BP \
 sim:/full_integration_branch_prediction/IF_MEM_Stage_inst/Address \
 sim:/full_integration_branch_prediction/WB_D_Stage_inst/regfile_inst/RegFile \
 sim:/full_integration_branch_prediction/EX_Stage_inst/CCR 
@@ -163,3 +170,18 @@ force -freeze sim:/full_integration_branch_prediction/rst 1 0
 run 50 ps
 force -freeze sim:/full_integration_branch_prediction/rst 0 0
 run 50 ps
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort 30 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort 50 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort 100 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort 300 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort FFFF 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort FFFF 0
+run 100 ps
+force -freeze sim:/full_integration_branch_prediction/INPort 400 0
+run 100 ps

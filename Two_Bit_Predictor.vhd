@@ -7,7 +7,7 @@ entity Two_Bit_Predictor is
         IFID_ConditionalJumpOperation, IDEX_ConditionalJumpOperation : in  std_logic;
         IDEX_ConditionalJMP                                          : in  std_logic;
         --IFID_IMM is not extended yet
-        IDEX_PC, IFID_IMM, IDEX_IMM                                  : in  std_logic_vector(31 downto 0);
+        IDEX_PC, IF_IMM, IDEX_IMM                                  : in  std_logic_vector(31 downto 0);
         clk                                                          : in  std_logic;
         rst                                                          : in  std_logic;
         --taken 1, untaken 0
@@ -26,7 +26,7 @@ begin
     lbl : process(clk, rst) is
     begin
         if rst = '1' then
-            Current_State <= STRONG_UNTAKEN;
+            Current_State <= STRONG_TAKEN;
 
         elsif rising_edge(clk) then
 
@@ -52,7 +52,7 @@ begin
     end process;
 
     Prediction_Result <= std_logic_vector(unsigned(IDEX_PC) + 2) when prediction_signal = '1' and IDEX_ConditionalJMP = '0' and IDEX_ConditionalJumpOperation = '1' else
-                         IFID_IMM when prediction_signal = '1' and IFID_ConditionalJumpOperation = '1' else
+                         IF_IMM when prediction_signal = '1' and IFID_ConditionalJumpOperation = '1' else
                          IDEX_IMM when prediction_signal = '0' and IDEX_ConditionalJMP = '1' and IDEX_ConditionalJumpOperation = '1' else (others => '0');
 
     Jump_Address_Selector <= '1' when prediction_signal = '1' and IDEX_ConditionalJMP = '0' and IDEX_ConditionalJumpOperation = '1' else

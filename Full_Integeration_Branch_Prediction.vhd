@@ -30,7 +30,14 @@ architecture RTL of Full_Integration_Branch_Prediction is
     signal IFIDFLUSH                  : std_logic;
 
     ------ HU -------
-    signal Rsrc1_Used, Rsrc2_Used : std_logic;
+    signal Rsrc1_Used, Rsrc2_Used        : std_logic;
+    ------BP---------
+    signal IFID_ConditionalJumpOperation : std_logic;
+    signal IDEX_ConditionalJumpOperation : std_logic;
+    signal BP_OUT                        : std_logic_vector(33 downto 0);
+    signal ConditionalJMP_BP             : std_logic;
+    signal BPRES : std_logic_vector(31 downto 0);
+    
 
 begin
     PCWrite   <= HU_OUT(4) or WB_D_OUT(165);
@@ -246,8 +253,10 @@ begin
             PCWrite             => PCWrite,
             IFID_SWInt          => WB_D_OUT(13),
             interrupt_index     => IFID_REG_OUT(65),
-            IDEX_ConditionalJMP => EX_OUT(109),
-            IDEX_Imm            => EX_OUT(141 downto 110),
+            IDEX_ConditionalJMP => ConditionalJMP_BP,
+            IDEX_Imm            => IDEX_REG_OUT(127 downto 96),
+            BP_Address          => BP_OUT(33 downto 2),
+            BP_Selector         => BP_OUT(1),
             IFID_JMPCALL        => WB_D_OUT(14),
             IFID_SWP            => WB_D_OUT(162),
             IFID_Imm32_SIGNAL   => WB_D_OUT(163),
@@ -324,24 +333,51 @@ begin
                                   EX_MEM_REG_OUT(105 downto 74) when Second_Operand_Signal = "10" else
                                   IDEX_REG_OUT(95 downto 64);
 
+    -----------------Hazard Detection--------------------
     HazardUnit_inst : entity work.HazardUnit
         port map(
-            IFID_Rsrc1          => WB_D_OUT(158 downto 156),
-            IFID_Rsrc2          => WB_D_OUT(161 downto 159),
-            IFID_JMPCALL        => WB_D_OUT(14),
-            IFID_RET            => WB_D_OUT(8),
-            IFID_HLT            => WB_D_OUT(200),
-            Rsrc1_Used          => Rsrc1_Used,
-            Rsrc2_Used          => Rsrc2_Used,
-            IDEX_Rdst           => IDEX_REG_OUT(133 downto 131),
-            IDEX_MemRead        => IDEX_REG_OUT(144),
-            IDEX_ConditionalJMP => EX_OUT(109),
-            EX_MEM_RET          => IF_MEM_OUT(168),
-            HU_IFID_EN          => HU_OUT(0),
-            HU_IFID_FLUSH       => HU_OUT(1),
-            HU_IDEX_FLUSH       => HU_OUT(2),
-            HU_EXMEM_FLUSH      => HU_OUT(3),
-            HU_PCWrite_OUT      => HU_OUT(4)
+            IFID_Rsrc1                    => WB_D_OUT(158 downto 156),
+            IFID_Rsrc2                    => WB_D_OUT(161 downto 159),
+            IFID_JMPCALL                  => WB_D_OUT(14),
+            IFID_RET                      => WB_D_OUT(8),
+            IFID_HLT                      => WB_D_OUT(200),
+            Rsrc1_Used                    => Rsrc1_Used,
+            Rsrc2_Used                    => Rsrc2_Used,
+            IDEX_Rdst                     => IDEX_REG_OUT(133 downto 131),
+            IDEX_MemRead                  => IDEX_REG_OUT(144),
+            IDEX_ConditionalJMP           => EX_OUT(109),
+            EX_MEM_RET                    => IF_MEM_OUT(168),
+            prediction                    => BP_OUT(0),
+            IFID_ConditionalJumpOperation => IFID_ConditionalJumpOperation,
+            IDEX_ConditionalJumpOperation => IDEX_ConditionalJumpOperation,
+            SECOND_Imm32_SIGNAL_IN        => IFID_REG_OUT(97),
+            HU_IFID_EN                    => HU_OUT(0),
+            HU_IFID_FLUSH                 => HU_OUT(1),
+            HU_IDEX_FLUSH                 => HU_OUT(2),
+            HU_EXMEM_FLUSH                => HU_OUT(3),
+            HU_PCWrite_OUT                => HU_OUT(4)
+        );
+
+    -----------------Branch Prediction--------------------
+
+    IFID_ConditionalJumpOperation <= '0' when WB_D_OUT(19 downto 18) = "00" else '1';
+    IDEX_ConditionalJumpOperation <= '0' when IDEX_REG_OUT(159 downto 158) = "00" else '1';
+    ConditionalJMP_BP             <= (BP_OUT(0) and IFID_ConditionalJumpOperation and not IFID_REG_OUT(97)) 
+        or ((BP_OUT(0) xor EX_OUT(109)) and IDEX_ConditionalJumpOperation);
+    BPRES <= BP_OUT(33 downto 2);
+    Two_Bit_Predictor_inst : entity work.Two_Bit_Predictor
+        port map(
+            clk                           => clk,
+            rst                           => rst,
+            IFID_ConditionalJumpOperation => IFID_ConditionalJumpOperation,
+            IDEX_ConditionalJumpOperation => IDEX_ConditionalJumpOperation,
+            IDEX_ConditionalJMP           => EX_OUT(109),
+            IDEX_PC                       => IDEX_REG_OUT(31 downto 0),
+            IF_IMM                      => IF_MEM_OUT(31 downto 0),
+            IDEX_IMM                      => IDEX_REG_OUT(127 downto 96),
+            prediction                    => BP_OUT(0),
+            Jump_Address_Selector         => BP_OUT(1),
+            Prediction_Result             => BP_OUT(33 downto 2)
         );
 
 end architecture RTL;

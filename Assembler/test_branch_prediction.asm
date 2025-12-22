@@ -8,14 +8,15 @@
 1000
 
 .ORG 200   # Code Segment
-SUB R7, R2, R2
+LDM R2, A
+INC R1
+SUB R7, R2, R1
 JZ 300
+JMP 202
 HLT
 
 .ORG 300
 NOT R6
-NOT R5
-NOT R4
 HLT
 
 
