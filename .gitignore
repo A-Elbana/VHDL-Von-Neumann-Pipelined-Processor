@@ -6,6 +6,8 @@
 !/*.vhdl
 !/*.do
 !/*.pdf
+!/*.svg
+!/*.png
 !/ALU/
 !/ALU/*
 !/Integeration_Folder/
