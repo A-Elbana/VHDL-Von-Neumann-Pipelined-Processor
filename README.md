@@ -1,7 +1,7 @@
 # VHDL Von Neumann Pipelined Processor
 
 ## Introduction
-This project implements a **16-bit / 32-bit Von Neumann Pipelined Processor** in VHDL. It features a 5-stage pipeline with robust hazard detection, data forwarding, and dynamic branch prediction. The design handles a shared memory for both instructions and data (Von Neumann architecture), checking for memory access conflicts between the Fetch and Memory stages.
+This project implements a **32-bit Von Neumann Pipelined Processor** in VHDL. It features a 5-stage pipeline with robust hazard detection, data forwarding, and dynamic branch prediction. The design handles a shared memory for both instructions and data (Von Neumann architecture), checking for memory access conflicts between the Fetch and Memory stages.
 
 ## Features
 - **5-Stage Pipeline**: Fetch, Decode, Execute, Memory, Write Back.
@@ -14,7 +14,7 @@ This project implements a **16-bit / 32-bit Von Neumann Pipelined Processor** in
 
 ## Architecture & Design Flow
 
-![Architecture Schematic](Architecture_Schematic.png)
+![Architecture Schematic](Architecture_Schematic.svg)
 
 The processor consists of the following key components integrated into `Full_Integration_Branch_Prediction.vhd`:
 
